@@ -8,7 +8,7 @@
 
 把 **产品 → 获客 → 客户管理 → 销售 → 交付 → 回访 → 转介绍** 连成一条线。
 
-[![CI](https://github.com/a16689525392-prog/-/actions/workflows/ci.yml/badge.svg)](https://github.com/a16689525392-prog/-/actions/workflows/ci.yml)
+[![CI](https://github.com/a16689525392-prog/jiaxiaohuoke/actions/workflows/ci.yml/badge.svg)](https://github.com/a16689525392-prog/jiaxiaohuoke/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.8%20~%203.13-3776AB?logo=python&logoColor=white)
 ![Dependencies](https://img.shields.io/badge/依赖-仅标准库-brightgreen)
 ![Database](https://img.shields.io/badge/数据库-SQLite-003B57?logo=sqlite&logoColor=white)
@@ -77,7 +77,7 @@
 **想先试一下（任何装了 Python 3.8+ 的电脑都行，Windows / macOS / Linux）：**
 
 ```bash
-git clone https://github.com/a16689525392-prog/-.git jiaxiao
+git clone https://github.com/a16689525392-prog/jiaxiaohuoke.git jiaxiao
 cd jiaxiao
 python3 run.py
 ```
@@ -88,12 +88,12 @@ python3 run.py
 **正式部署到 Ubuntu 服务器：**
 
 ```bash
-git clone https://github.com/a16689525392-prog/-.git jiaxiao
+git clone https://github.com/a16689525392-prog/jiaxiaohuoke.git jiaxiao
 cd jiaxiao
 sudo bash install.sh
 ```
 
-或者到 [Releases](https://github.com/a16689525392-prog/-/releases) 下载 `jiaxiao-x.y.z.tar.gz` 安装包（适合没法访问 GitHub 的内网机器：在别的电脑上下载，拷过去再装）。
+或者到 [Releases](https://github.com/a16689525392-prog/jiaxiaohuoke/releases) 下载 `jiaxiao-x.y.z.tar.gz` 安装包（适合没法访问 GitHub 的内网机器：在别的电脑上下载，拷过去再装）。
 
 ---
 
@@ -109,7 +109,7 @@ cd jiaxiao-1.0.0
 sudo bash install.sh
 
 # 方式 B：直接用 git 仓库
-git clone https://github.com/a16689525392-prog/-.git jiaxiao
+git clone https://github.com/a16689525392-prog/jiaxiaohuoke.git jiaxiao
 cd jiaxiao
 sudo bash install.sh
 ```
@@ -197,7 +197,7 @@ sudo bash /opt/jiaxiao/uninstall.sh --purge    # 连数据一起删除，不能�
 （拉不下来的话，用上面的安装脚本，它不需要联网）。
 
 ```bash
-git clone https://github.com/a16689525392-prog/-.git jiaxiao
+git clone https://github.com/a16689525392-prog/jiaxiaohuoke.git jiaxiao
 cd jiaxiao
 docker compose up -d --build
 docker compose logs jiaxiao | grep 初始化口令        # 第一次创建管理员要用
