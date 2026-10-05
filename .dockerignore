@@ -1,0 +1,15 @@
+data
+**/__pycache__
+*.pyc
+tests
+deploy
+install.sh
+uninstall.sh
+README.md
+*.tar.gz
+.git
+docs
+.github
+.gitignore
+CHANGELOG.md
+LICENSE

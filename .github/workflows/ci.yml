@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: 测试 (Python ${{ matrix.python }})
+    # ubuntu-22.04 仍提供 Python 3.8
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: 运行测试
+        run: python -m unittest discover -s tests -v
+
+  shell:
+    name: 脚本语法检查
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: bash -n
+        run: |
+          for f in install.sh uninstall.sh deploy/jiaxiao.sh; do bash -n "$f"; done
+
+  docker:
+    name: Docker 构建与启动
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 构建镜像
+        run: docker build -t jiaxiao:ci .
+      - name: 启动并检查健康状态
+        run: |
+          docker run -d --name jiaxiao -p 8000:8000 jiaxiao:ci
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8000/healthz; then echo; break; fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8000/healthz
+          docker logs jiaxiao 2>&1 | grep -q 初始化口令
+      - name: 容器日志
+        if: always()
+        run: docker logs jiaxiao || true

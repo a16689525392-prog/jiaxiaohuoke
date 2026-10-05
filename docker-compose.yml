@@ -1,0 +1,29 @@
+# 驾校招生业务系统 —— Docker 方式运行
+#
+#   docker compose up -d --build          构建并在后台启动
+#   docker compose logs jiaxiao           看日志（第一次启动时，初始化口令在这里）
+#   docker compose down                   停止（数据在名为 jiaxiao-data 的卷里，不会丢）
+#
+# 更多命令见 README.md 的“用 Docker 运行”。
+services:
+  jiaxiao:
+    build: .
+    image: jiaxiao:1.0.0
+    container_name: jiaxiao
+    restart: unless-stopped
+    ports:
+      # 左边是宿主机端口，想换端口只改左边，例如 "8080:8000"。
+      # 只想让本机访问：改成 "127.0.0.1:8000:8000"。
+      - "8000:8000"
+    environment:
+      JX_TZ_OFFSET: "8"        # “今天”按哪个时区算，北京时间填 8
+      JX_ALLOW_PUBLIC: "0"     # 默认拒绝来自公网地址的访问
+    volumes:
+      - jiaxiao-data:/data     # 数据库和每天的自动备份
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+volumes:
+  jiaxiao-data:

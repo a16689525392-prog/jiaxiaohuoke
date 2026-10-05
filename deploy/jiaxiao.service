@@ -1,0 +1,42 @@
+# 驾校招生业务系统 —— systemd 服务。
+# install.sh 会把 @PYTHON@ 换成这台机器上 python3 的路径，然后放到 /etc/systemd/system/jiaxiao.service。
+[Unit]
+Description=驾校招生业务系统 (jiaxiao)
+After=network.target
+# 启动失败（比如端口被占用）时最多连续重试 5 次，之后停下来等人处理，原因用 sudo jiaxiao logs 看。
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=jiaxiao
+Group=jiaxiao
+WorkingDirectory=/opt/jiaxiao
+EnvironmentFile=/etc/jiaxiao/jiaxiao.env
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=@PYTHON@ /opt/jiaxiao/run.py serve
+Restart=on-failure
+RestartSec=3
+
+# 服务只需要读程序目录、写数据目录，别的都不给。
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+StateDirectory=jiaxiao
+StateDirectoryMode=0750
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
+RestrictSUIDSGID=true
+RestrictRealtime=true
+LockPersonality=true
+CapabilityBoundingSet=
+AmbientCapabilities=
+
+[Install]
+WantedBy=multi-user.target
