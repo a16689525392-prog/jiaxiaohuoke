@@ -1,0 +1,15 @@
+<view class="wrap">
+  <view class="card">
+    <view class="card-title">部署后跑一遍</view>
+    <view class="small">自检会在你的云环境里把关键流程真的走一遍：登记、跟进、四项核对、报名、交付、异常台账、统计，以及“团队之间互相看不到”。</view>
+    <view class="small muted mt">只读写带“自检”标记的临时团队，不碰你的业务数据，结束时全部删掉。大约需要十几秒。</view>
+    <view class="btn btn-primary mt {{running ? 'btn-off' : ''}}" hover-class="btn-hover" bindtap="start">{{running ? '正在自检…' : (steps.length ? '再跑一遍' : '开始自检')}}</view>
+  </view>
+
+  <view wx:if="{{verdict}}" class="{{all_ok ? 'info' : 'errors'}}">{{verdict}}</view>
+
+  <view wx:for="{{steps}}" wx:for-item="st" wx:key="step" class="card">
+    <view class="card-title"><text>{{st.step + 1}}. {{st.name}}</text><text class="chip {{st.ok ? 'chip-green' : 'chip-red'}}">{{st.ok ? '通过' : '有问题'}} · {{st.ms}} 毫秒</text></view>
+    <view wx:for="{{st.lines}}" wx:key="text" class="small line {{item.ok ? '' : 'due-over'}}">{{item.ok ? '✓' : '✗'}} {{item.text}}</view>
+  </view>
+</view>

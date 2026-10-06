@@ -1,0 +1,1 @@
+.avatar { flex: none; width: 96rpx; height: 96rpx; line-height: 96rpx; margin-right: 24rpx; border-radius: 999rpx; background: #1f4e79; color: #fff; text-align: center; font-size: 42rpx; font-weight: 600; }

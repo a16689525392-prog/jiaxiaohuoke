@@ -1,0 +1,26 @@
+<include src="../../tpl/state.wxml"/>
+<view wx:if="{{!loading && !error}}" class="wrap">
+  <view class="section-title">产品卡 · 每个班型一张，报价和四项核对都以它为准</view>
+  <view class="card">
+    <view wx:if="{{!items.length}}" class="empty">{{archived ? '没有已停用的班型。' : (can_edit ? '还没有产品卡。先填第 1 个班型。' : '还没有产品卡，请管理员先填。')}}</view>
+    <view wx:for="{{items}}" wx:key="id" class="row" hover-class="row-hover" bindtap="go" data-url="/pages/product/index?id={{item.id}}">
+      <view class="row-main">
+        <view class="row-title"><text class="name">{{item.name}}</text><text wx:if="{{item.pending}}" class="chip chip-amber">{{item.pending}} 项没核实</text><text wx:else class="chip chip-green">已填全</text></view>
+        <view class="row-sub small muted">{{item.vehicle || '车型待补充'}} · {{item.fee_text}}</view>
+        <view class="row-sub small muted">{{item.verified}} · {{item.customers}} 位客户匹配了它</view>
+      </view>
+      <view class="arrow">›</view>
+    </view>
+  </view>
+  <view class="btn-row mb">
+    <view wx:if="{{can_edit && !archived}}" class="btn btn-primary" hover-class="btn-hover" bindtap="go" data-url="/pages/product-edit/index">＋ 新增班型</view>
+    <view wx:if="{{archived || archived_count}}" class="btn" hover-class="btn-hover" bindtap="toggleArchived">{{archived ? '回到在用的班型' : '已停用的（' + archived_count + '）'}}</view>
+  </view>
+
+  <view class="card">
+    <view class="menu" hover-class="row-hover" bindtap="go" data-url="/pages/scripts/index"><view class="menu-main">统一话术<view class="tiny muted">全团队同一套说法，能带上产品卡里核实过的内容</view></view><view class="arrow">›</view></view>
+    <view class="menu" hover-class="row-hover" bindtap="go" data-url="/pages/channels/index"><view class="menu-main">获客渠道<view class="tiny muted">统一入口、渠道码，每个渠道来了多少人</view></view><view class="arrow">›</view></view>
+    <view class="menu" hover-class="row-hover" bindtap="go" data-url="/pages/referrals/index"><view class="menu-main">转介绍<view class="tiny muted">公开规则，谁推荐了谁</view></view><view class="arrow">›</view></view>
+    <view class="menu" hover-class="row-hover" bindtap="go" data-url="/pages/guide/index"><view class="menu-main">开始与红线<view class="tiny muted">头四周怎么做，哪些话不能说、哪些事不能做</view></view><view class="arrow">›</view></view>
+  </view>
+</view>

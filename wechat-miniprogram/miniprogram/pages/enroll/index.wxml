@@ -1,0 +1,78 @@
+<include src="../../tpl/state.wxml"/>
+<view wx:if="{{!loading && !error}}" class="wrap wrap-bar">
+  <view class="card">
+    <view class="h1">{{c.name}}</view>
+    <view class="muted small">收钱之前，和客户一项一项对清楚。四项都对上了，再收定金或办正式报名。</view>
+    <view class="field mt">
+      <view class="field-label">报哪个班型</view>
+      <picker wx:if="{{products.length}}" mode="selector" range="{{products}}" range-key="name" value="{{idx_product}}" bindchange="setProduct">
+        <view class="picker">{{product.name}}</view>
+      </picker>
+      <view wx:else class="warn">还没有产品卡。先在“资料”里填一个班型，再回来办报名。</view>
+    </view>
+    <view wx:if="{{product && product.pending}}" class="warn">这张产品卡还有 {{product.pending}} 项没核实（下面标着“{{pending_text}}”的）。先对着合作协议和合同核实，再和客户确认。</view>
+  </view>
+
+  <include src="../../tpl/errors.wxml"/>
+
+  <view wx:for="{{checks}}" wx:for-item="ch" wx:for-index="i" wx:key="key" class="card">
+    <view class="card-title">{{i + 1}}. {{ch.label}}</view>
+    <view wx:for="{{ch.rows}}" wx:for-item="r" wx:key="label" class="kv {{r.pending ? 'kv-pending' : ''}}"><view class="kv-k">{{r.label}}</view><view class="kv-v">{{r.value}}</view></view>
+    <view class="check" bindtap="tick" data-k="{{ch.key}}">
+      <view class="box {{ticked[ch.key] ? 'box-on' : ''}}">{{ticked[ch.key] ? '✓' : ''}}</view>
+      <view class="check-main bold">已和客户当面（或文字）核对过这一项</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">这次办什么</view>
+    <view class="seg">
+      <view class="seg-item {{f.action === 'deposit' ? 'seg-on' : ''}}" bindtap="onChoose" data-k="action" data-v="deposit">收定金</view>
+      <view class="seg-item {{f.action === 'enroll' ? 'seg-on' : ''}}" bindtap="onChoose" data-k="action" data-v="enroll">正式报名</view>
+    </view>
+    <view class="field">
+      <view class="field-label">日期</view>
+      <picker mode="date" value="{{f.on}}" end="{{today}}" data-k="on" bindchange="onDate"><view class="picker">{{f.on}}</view></picker>
+    </view>
+
+    <block wx:if="{{f.action === 'deposit'}}">
+      <view class="field">
+        <view class="field-label">下次跟进时间<text class="req">*</text></view>
+        <picker mode="date" value="{{f.next_on || today}}" start="{{today}}" data-k="next_on" bindchange="onDate">
+          <view class="picker {{f.next_on ? '' : 'placeholder'}}">{{f.next_on || '什么时候办正式报名'}}</view>
+        </picker>
+      </view>
+      <view class="field">
+        <view class="field-label">下一步动作</view>
+        <input class="input" value="{{f.next_action}}" data-k="next_action" bindinput="onField" maxlength="120" placeholder="比如：带资料来签合同"/>
+      </view>
+    </block>
+
+    <block wx:if="{{f.action === 'enroll'}}">
+      <view class="check" bindtap="onToggle" data-k="contract"><view class="box {{f.contract ? 'box-on' : ''}}">{{f.contract ? '✓' : ''}}</view><view class="check-main">已签正式合同<text class="req">*</text></view></view>
+      <view class="check" bindtap="onToggle" data-k="receipt"><view class="box {{f.receipt ? 'box-on' : ''}}">{{f.receipt ? '✓' : ''}}</view><view class="check-main">钱付到了合同上的收款主体，并已开具付款凭证<text class="req">*</text></view></view>
+      <view class="check" bindtap="onToggle" data-k="doclist"><view class="box {{f.doclist ? 'box-on' : ''}}">{{f.doclist ? '✓' : ''}}</view><view class="check-main">合同和资料清单已发给学员</view></view>
+      <view class="check" bindtap="onToggle" data-k="told_owner"><view class="box {{f.told_owner ? 'box-on' : ''}}">{{f.told_owner ? '✓' : ''}}</view><view class="check-main">已告诉学员报名后找谁（交付负责人）</view></view>
+      <view wx:if="{{can_all}}" class="field mt">
+        <view class="field-label">交付负责人</view>
+        <picker mode="selector" range="{{members}}" range-key="name" value="{{idx.owner_id}}" data-k="owner_id" data-list="members" bindchange="onPick">
+          <view class="picker">{{label.owner_id}}</view>
+        </picker>
+      </view>
+      <view class="field mt">
+        <view class="field-label">交付的下次动作日期<text class="req">*</text></view>
+        <picker mode="date" value="{{f.next_on || today}}" start="{{today}}" data-k="next_on" bindchange="onDate">
+          <view class="picker {{f.next_on ? '' : 'placeholder'}}">{{f.next_on || '比如今天发资料清单'}}</view>
+        </picker>
+      </view>
+      <view class="field">
+        <view class="field-label">交付的下一步动作</view>
+        <input class="input" value="{{f.next_action}}" data-k="next_action" bindinput="onField" maxlength="120" placeholder="{{default_todo}}"/>
+      </view>
+    </block>
+    <view class="hint">{{red_line}}</view>
+  </view>
+</view>
+<view wx:if="{{!loading && !error}}" class="bar">
+  <view class="btn btn-amber {{busy ? 'btn-off' : ''}}" hover-class="btn-hover" bindtap="save">{{f.action === 'enroll' ? '确认正式报名' : '记录定金'}}</view>
+</view>

@@ -1,0 +1,24 @@
+<include src="../../tpl/state.wxml"/>
+<view wx:if="{{!loading && !error}}" class="wrap">
+  <view class="card">
+    <view class="card-title">五条红线</view>
+    <view wx:for="{{red_lines}}" wx:key="*this" class="red"><text class="red-no">{{index + 1}}</text><view class="flex-1">{{item}}</view></view>
+  </view>
+
+  <view wx:if="{{hints.length}}" class="card">
+    <view class="card-title">现在还差这几件事</view>
+    <view wx:for="{{hints}}" wx:key="text" class="row">
+      <view class="row-main small">{{item.text}}</view>
+      <view class="btn btn-small ml" hover-class="btn-hover" bindtap="go" data-url="{{item.url}}">{{item.action}}</view>
+    </view>
+  </view>
+
+  <view class="section-title">头四周怎么做 · 从 {{start_label}} 算起</view>
+  <view class="card">
+    <view wx:for="{{plan}}" wx:key="text" class="step {{item.past ? 'step-past' : ''}}">
+      <view class="step-when"><view class="bold">{{item.when}}</view><view class="tiny muted">{{item.repeating ? '下一次 ' : ''}}{{item.date}}</view></view>
+      <view class="step-text">{{item.text}}</view>
+    </view>
+    <view class="tiny muted mt">周复盘和渠道成本对比，这一版小程序里先不做，用纸笔或表格记即可。</view>
+  </view>
+</view>

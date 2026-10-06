@@ -1,0 +1,35 @@
+<include src="../../tpl/state.wxml"/>
+<view wx:if="{{!loading && !error}}" class="wrap">
+  <view class="card">
+    <view class="field-label">沟通顺序</view>
+    <view class="order"><block wx:for="{{order}}" wx:key="*this"><text wx:if="{{index}}" class="muted"> → </text><text>{{item}}</text></block></view>
+    <view class="field mt">
+      <view class="field-label">用哪个班型的信息填【】</view>
+      <picker mode="selector" range="{{choices}}" range-key="name" value="{{idx_product}}" bindchange="setProduct">
+        <view class="picker">{{choices[idx_product].name}}</view>
+      </picker>
+      <view class="hint">只会填产品卡里已经核实的内容；没核实的保持【】原样，说之前先去核实。</view>
+    </view>
+  </view>
+
+  <block wx:for="{{groups}}" wx:for-item="g" wx:key="name">
+    <view class="section-title">{{g.name}}</view>
+    <view wx:for="{{g.items}}" wx:for-item="s" wx:key="id" class="card">
+      <view class="card-title"><text>{{s.scene}}</text><text wx:if="{{can_edit}}" class="link small" bindtap="go" data-url="/pages/script-edit/index?id={{s.id}}">编辑</text></view>
+      <view wx:if="{{s.when_use}}" class="card-note">{{s.when_use}}</view>
+      <view class="quote"><text class="pre" user-select="true">{{s.body}}</text></view>
+      <view wx:if="{{s.tips}}" class="tiny muted mt"><text class="pre" user-select="true">要点：{{s.tips}}</text></view>
+      <view class="btn btn-small mt" hover-class="btn-hover" bindtap="copy" data-text="{{s.body}}" data-done="已复制，去微信里粘贴">复制</view>
+    </view>
+  </block>
+
+  <view class="section-title">不能说的话</view>
+  <view class="card">
+    <view wx:for="{{forbidden}}" wx:key="say" class="log">
+      <view class="bold due-over">{{item.say}}<text class="chip chip-red">{{item.kind}}</text></view>
+      <view class="small">{{item.why}}</view>
+      <view class="small muted">改成：{{item.instead}}</view>
+    </view>
+  </view>
+  <view wx:if="{{can_edit}}" class="btn" hover-class="btn-hover" bindtap="go" data-url="/pages/script-edit/index">＋ 新增话术</view>
+</view>

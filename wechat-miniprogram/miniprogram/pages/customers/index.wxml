@@ -1,0 +1,35 @@
+<include src="../../tpl/state.wxml"/>
+<view wx:if="{{!loading && !error}}" class="wrap">
+  <include src="../../tpl/scope.wxml"/>
+  <view class="search">
+    <input class="input flex-1" value="{{q}}" bindinput="onQuery" bindconfirm="search" confirm-type="search" placeholder="搜称呼、联系方式、学校、沟通要点"/>
+    <view class="btn btn-small ml" hover-class="btn-hover" bindtap="search">搜索</view>
+  </view>
+  <scroll-view scroll-x class="scroll-x">
+    <view wx:for="{{filters.follow}}" wx:key="value" class="opt {{follow === item.value ? 'opt-on' : ''}}" bindtap="setFollow" data-v="{{item.value}}">{{item.label}}</view>
+  </scroll-view>
+  <view class="filters">
+    <picker class="filter" mode="selector" range="{{filters.grades}}" range-key="label" value="{{idx.grade}}" data-k="grade" bindchange="setFilter">
+      <view class="filter-box">{{filters.grades[idx.grade].label}}</view>
+    </picker>
+    <picker class="filter" mode="selector" range="{{filters.statuses}}" range-key="label" value="{{idx.status}}" data-k="status" bindchange="setFilter">
+      <view class="filter-box">{{filters.statuses[idx.status].label}}</view>
+    </picker>
+    <picker class="filter" mode="selector" range="{{filters.channels}}" range-key="label" value="{{idx.channel}}" data-k="channel" bindchange="setFilter">
+      <view class="filter-box">{{filters.channels[idx.channel].label}}</view>
+    </picker>
+    <picker wx:if="{{filters.owners.length && !mine}}" class="filter" mode="selector" range="{{filters.owners}}" range-key="label" value="{{idx.owner}}" data-k="owner" bindchange="setFilter">
+      <view class="filter-box">{{filters.owners[idx.owner].label}}</view>
+    </picker>
+  </view>
+
+  <view class="section-title">共 {{total}} 位</view>
+  <view class="card">
+    <view wx:if="{{!items.length}}" class="empty">没有符合条件的客户。</view>
+    <block wx:for="{{items}}" wx:for-item="c" wx:key="id">
+      <include src="../../tpl/customer-row.wxml"/>
+    </block>
+  </view>
+  <view wx:if="{{has_more}}" class="btn btn-plain" hover-class="btn-hover" bindtap="more">加载更多</view>
+</view>
+<view wx:if="{{!loading && !error}}" class="fab" hover-class="btn-hover" bindtap="go" data-url="/pages/customer-edit/index">＋ 登记客户</view>

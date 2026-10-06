@@ -1,0 +1,18 @@
+<view class="row" hover-class="row-hover" bindtap="go" data-url="/pages/student/index?id={{s.id}}">
+  <view class="row-main">
+    <view class="row-title">
+      <text class="name">{{s.name}}</text>
+      <text class="chip chip-blue">{{s.stage}}</text>
+      <text wx:if="{{s.open_issues}}" class="chip chip-red">异常 {{s.open_issues}}</text>
+      <text wx:if="{{s.docs_missing}}" class="chip chip-amber">缺资料</text>
+      <text wx:if="{{s.booking}}" class="chip chip-amber">约不到车</text>
+    </view>
+    <view class="row-sub muted small">{{s.product || '班型未填'}}<text wx:if="{{s.owner}}"> · {{s.owner}}</text><text wx:if="{{s.exam_label}}"> · {{s.exam_label}}</text></view>
+    <view wx:if="{{s.what}}" class="row-sub small">这一天：{{s.what}}</view>
+    <view wx:if="{{!s.what && s.next_action}}" class="row-sub small">下一步：{{s.next_action}}</view>
+  </view>
+  <view wx:if="{{s.hints}}" class="row-side">
+    <view wx:for="{{s.hints}}" wx:for-item="h" wx:key="text" class="{{h.cls}}">{{h.text}}</view>
+  </view>
+  <view wx:if="{{!s.hints && s.active}}" class="row-side {{s.due_cls}}">{{s.due_label}}</view>
+</view>

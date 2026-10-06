@@ -1,0 +1,31 @@
+<include src="../../tpl/state.wxml"/>
+<view wx:if="{{!loading && !error}}" class="wrap">
+  <view class="card">
+    <view class="card-title">公开规则<text wx:if="{{can_edit}}" class="link small" bindtap="go" data-url="/pages/settings/index">{{rules_ready ? '修改' : '去写规则'}} ›</text></view>
+    <view wx:if="{{!rules_ready}}" class="warn">规则还没写。转介绍要有写下来、公开的规则，不能靠口头说。</view>
+    <view wx:for="{{rules}}" wx:key="label" class="kv {{item.value ? '' : 'kv-pending'}}"><view class="kv-k">{{item.label}}</view><view class="kv-v"><text class="pre">{{item.value || '还没写。例：' + item.example}}</text></view></view>
+  </view>
+  <view class="card">
+    <view class="card-title">不能碰的线</view>
+    <view wx:for="{{red_lines}}" wx:key="*this" class="small line">· {{item}}</view>
+  </view>
+
+  <view class="section-title">谁推荐了谁 · 登记客户时选上推荐人，这里就有</view>
+  <view class="card">
+    <view wx:if="{{!people.length}}" class="empty">还没有转介绍来的客户。</view>
+    <view wx:for="{{people}}" wx:key="id" class="row" hover-class="row-hover" bindtap="go" data-url="/pages/customer/index?id={{item.id}}">
+      <view class="row-main">
+        <view class="row-title"><text class="name">{{item.name}}</text><text class="chip chip-green">已报名 {{item.enrolled}}</text><text class="chip">共推荐 {{item.total}}</text></view>
+        <view class="small muted">{{item.who}}</view>
+      </view>
+      <view class="arrow">›</view>
+    </view>
+  </view>
+
+  <block wx:if="{{willing.length}}">
+    <view class="section-title">回访时说愿意推荐的学员</view>
+    <view class="card">
+      <view wx:for="{{willing}}" wx:key="id" class="menu" hover-class="row-hover" bindtap="go" data-url="/pages/student/index?id={{item.id}}"><view class="menu-main">{{item.name}}</view><view class="menu-side">{{item.stage}}</view><view class="arrow">›</view></view>
+    </view>
+  </block>
+</view>

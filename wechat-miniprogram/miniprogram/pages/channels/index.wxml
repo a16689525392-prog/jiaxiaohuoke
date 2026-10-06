@@ -1,0 +1,26 @@
+<include src="../../tpl/state.wxml"/>
+<view wx:if="{{!loading && !error}}" class="wrap">
+  <view class="card">
+    <view class="card-title">统一入口<text wx:if="{{can_edit}}" class="link small" bindtap="go" data-url="/pages/settings/index">去设置 ›</text></view>
+    <view wx:if="{{entry}}"><text user-select="true">{{entry}}</text></view>
+    <view wx:else class="muted">还没填。每个渠道都用同一个企业微信或工作微信，客户加进来以后在备注里写渠道码。</view>
+  </view>
+
+  <view class="section-title">{{archived ? '已停用的渠道' : '在用的渠道 · 登记客户时选来源，月底才知道哪个渠道有效'}}</view>
+  <view class="card">
+    <view wx:if="{{!items.length}}" class="empty">{{archived ? '没有已停用的渠道。' : '还没有渠道。'}}</view>
+    <view wx:for="{{items}}" wx:key="id" class="row" hover-class="{{can_edit ? 'row-hover' : 'none'}}" bindtap="edit" data-id="{{item.id}}">
+      <view class="row-main">
+        <view class="row-title"><text class="name">{{item.name}}</text><text wx:if="{{item.code}}" class="chip chip-blue">{{item.code}}</text><text wx:if="{{item.kind}}" class="chip">{{item.kind}}</text><text class="chip {{item.status === '进行中' ? 'chip-green' : ''}}">{{item.status}}</text></view>
+        <view wx:if="{{item.how}}" class="small muted how">{{item.how}}</view>
+        <view wx:if="{{item.note}}" class="small how">备注：{{item.note}}</view>
+        <view class="small mt">登记 {{item.total}} 位 · 正式报名 {{item.enrolled}} 位</view>
+      </view>
+      <view wx:if="{{can_edit}}" class="arrow">›</view>
+    </view>
+  </view>
+  <view class="btn-row">
+    <view wx:if="{{can_edit && !archived}}" class="btn btn-primary" hover-class="btn-hover" bindtap="go" data-url="/pages/channel-edit/index">＋ 新增渠道</view>
+    <view wx:if="{{archived || archived_count}}" class="btn" hover-class="btn-hover" bindtap="toggleArchived">{{archived ? '回到在用的渠道' : '已停用的（' + archived_count + '）'}}</view>
+  </view>
+</view>

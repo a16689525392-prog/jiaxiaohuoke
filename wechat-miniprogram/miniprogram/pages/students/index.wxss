@@ -1,0 +1,5 @@
+.search { display: flex; align-items: center; margin-bottom: 18rpx; }
+.search .input { background: #fff; }
+.filters { display: flex; margin: 0 -8rpx; }
+.filter { flex: 1; min-width: 0; padding: 0 8rpx; }
+.filter-box { background: #fff; border: 2rpx solid #dfe5ec; border-radius: 10rpx; padding: 12rpx 14rpx; font-size: 24rpx; color: #33404d; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; }

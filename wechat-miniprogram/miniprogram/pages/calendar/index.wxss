@@ -1,0 +1,15 @@
+.cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16rpx; }
+.cal-range { flex: 1; text-align: center; font-size: 26rpx; font-weight: 600; color: #163a5a; }
+.cal-row { display: flex; }
+.cal-cell { flex: 1; min-width: 0; text-align: center; }
+.cal-head { color: #6b7785; font-size: 22rpx; padding-bottom: 8rpx; }
+.cal-day { min-height: 104rpx; padding: 6rpx 0; border-top: 1rpx solid #eef1f4; border-radius: 8rpx; }
+.cal-num { font-size: 26rpx; color: #33404d; }
+.cal-past .cal-num { color: #a9b3be; }
+.cal-today .cal-num { color: #fff; background: #1f4e79; border-radius: 999rpx; display: inline-block; min-width: 44rpx; padding: 0 8rpx; }
+.cal-picked { background: #e8f1f9; }
+.cal-count { font-size: 20rpx; color: #1f4e79; line-height: 1.4; }
+.cal-hot { color: #b3261e; font-weight: 600; }
+.cal-marks { font-size: 18rpx; line-height: 1.4; }
+.cal-todo { color: #7a5600; }
+.cal-exam { color: #1e6b3a; margin-left: 4rpx; }

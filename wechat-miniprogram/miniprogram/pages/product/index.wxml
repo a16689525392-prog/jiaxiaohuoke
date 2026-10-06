@@ -1,0 +1,25 @@
+<include src="../../tpl/state.wxml"/>
+<view wx:if="{{!loading && !error}}" class="wrap wrap-bar">
+  <view wx:if="{{p.archived}}" class="warn">这个班型已停用，登记客户和报名时不再出现。</view>
+  <view wx:if="{{pending}}" class="warn">还有 {{pending}} 项没核实，标着“{{pending_text}}”或“待补充”。对着合作协议和合同核实后再发给客户。</view>
+  <view class="card">
+    <view class="h1">{{p.name}}</view>
+    <view class="muted small">{{p.vehicle}}｜{{p.school}}</view>
+    <view class="kv mt"><view class="kv-k">适合谁</view><view class="kv-v">{{p.who}}</view></view>
+  </view>
+  <view wx:for="{{card}}" wx:for-item="sec" wx:key="title" class="card">
+    <view class="card-title">{{sec.title}}</view>
+    <view wx:for="{{sec.rows}}" wx:for-item="r" wx:key="label" class="kv {{r.pending ? 'kv-pending' : ''}}"><view class="kv-k">{{r.label}}</view><view class="kv-v"><text class="pre" user-select="true">{{r.value}}</text></view></view>
+  </view>
+  <view class="card">
+    <view class="kv"><view class="kv-k">我们不承诺</view><view class="kv-v">{{no_promise}}。</view></view>
+    <view class="kv"><view class="kv-k">报名方式</view><view class="kv-v">{{how_to_enroll}}</view></view>
+    <view class="kv"><view class="kv-k">信息核验日期</view><view class="kv-v">{{p.verified}}<text wx:if="{{p.verifier}}"> · {{p.verifier}}</text>｜以正式合同和当前合作协议为准。</view></view>
+    <view wx:if="{{p.basis}}" class="kv"><view class="kv-k">信息依据</view><view class="kv-v">{{p.basis}}</view></view>
+  </view>
+  <view wx:if="{{can_edit}}" class="btn btn-plain {{p.archived ? '' : 'btn-danger'}}" hover-class="btn-hover" bindtap="archive">{{p.archived ? '恢复这个班型' : '停用这个班型'}}</view>
+</view>
+<view wx:if="{{!loading && !error}}" class="bar">
+  <view wx:if="{{can_edit}}" class="btn" hover-class="btn-hover" bindtap="go" data-url="/pages/product-edit/index?id={{p.id}}">编辑</view>
+  <view class="btn btn-primary" hover-class="btn-hover" bindtap="copy" data-text="{{text}}" data-done="已复制，去微信里粘贴">复制文字版发给客户</view>
+</view>

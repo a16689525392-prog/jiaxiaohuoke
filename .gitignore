@@ -16,3 +16,8 @@ dist/
 .vscode/
 .idea/
 .DS_Store
+
+# 微信小程序
+node_modules/
+miniprogram_npm/
+project.private.config.json

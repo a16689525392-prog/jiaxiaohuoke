@@ -1,0 +1,93 @@
+<include src="../../tpl/state.wxml"/>
+<view wx:if="{{!loading && !error}}" class="wrap">
+  <view class="card">
+    <view class="h1">{{c.name}}<text class="chip chip-{{c.grade || 'none'}}">{{c.grade_label}}</text><text class="chip {{c.locked ? 'chip-green' : ''}}">{{c.status}}</text></view>
+    <view class="muted small mt">{{c.channel || '渠道未填'}} · 负责人 {{c.owner || '未指定'}} · {{c.registered}} 登记</view>
+    <view wx:if="{{c.active}}" class="small">下次跟进：<text class="{{c.due_cls}}">{{c.due_label}}</text><text wx:if="{{c.next_action}}"> · {{c.next_action}}</text></view>
+    <view class="profile">
+      <view wx:if="{{c.contact}}" class="kv"><view class="kv-k">联系方式</view><view class="kv-v"><text user-select="true">{{c.contact}}</text><text class="link ml" bindtap="copy" data-text="{{c.contact}}">复制</text></view></view>
+      <view wx:for="{{profile}}" wx:key="k" class="kv"><view class="kv-k">{{item.k}}</view><view class="kv-v">{{item.v}}</view></view>
+    </view>
+    <view class="btn-row mt">
+      <view wx:if="{{student_id}}" class="btn btn-primary" hover-class="btn-hover" bindtap="go" data-url="/pages/student/index?id={{student_id}}">打开学员交付</view>
+      <view wx:else class="btn btn-amber" hover-class="btn-hover" bindtap="go" data-url="/pages/enroll/index?id={{c.id}}">{{follow.enroll_label}}</view>
+      <view class="btn" hover-class="btn-hover" bindtap="go" data-url="/pages/customer-edit/index?id={{c.id}}">编辑资料</view>
+    </view>
+  </view>
+
+  <include src="../../tpl/errors.wxml"/>
+  <view class="card">
+    <view class="card-title">记录跟进</view>
+    <view wx:if="{{c.enrolled}}" class="card-note">已正式报名，后面的事在“学员交付”里按节点跟。这里仍然可以补记沟通内容。</view>
+    <view class="field">
+      <view class="field-label">这次沟通的要点 / 客户顾虑</view>
+      <textarea class="textarea" value="{{f.summary}}" data-k="summary" bindinput="onField" maxlength="2000" auto-height placeholder="客户当时担心什么，你说了什么，对方卡在哪一步"/>
+    </view>
+    <view wx:if="{{follow.show_grade}}" class="field">
+      <view class="field-label">分级<text class="link ml" bindtap="toggleHelp">{{help ? '收起标准' : '分级标准'}}</text></view>
+      <view class="opts">
+        <view wx:for="{{follow.grades}}" wx:key="value" class="opt {{f.grade === item.value ? 'opt-on' : ''}}" bindtap="onChoose" data-k="grade" data-v="{{item.value}}">{{item.label}}</view>
+      </view>
+      <view wx:if="{{help}}" class="info mt">
+        <view wx:for="{{follow.grade_help}}" wx:key="grade"><text class="bold">{{item.grade}}</text>：{{item.text}}</view>
+      </view>
+    </view>
+    <view wx:if="{{follow.statuses.length}}" class="field">
+      <view class="field-label">当前状态</view>
+      <view class="opts">
+        <view wx:for="{{follow.statuses}}" wx:key="*this" class="opt {{f.status === item ? 'opt-on' : ''}}" bindtap="onChoose" data-k="status" data-v="{{item}}">{{item}}</view>
+      </view>
+      <view class="hint">{{follow.status_hint}}</view>
+    </view>
+    <view wx:if="{{!c.enrolled}}" class="field">
+      <view class="field-label">下一步动作</view>
+      <input class="input" value="{{f.next_action}}" data-k="next_action" bindinput="onField" maxlength="120" placeholder="比如：发对比清单、约到店看训练场"/>
+    </view>
+    <view wx:if="{{!c.enrolled}}" class="field">
+      <view class="field-label">下次跟进时间<text class="req">*</text></view>
+      <picker mode="date" value="{{f.next_follow_on || today}}" start="{{today}}" data-k="next_follow_on" bindchange="onDate">
+        <view class="picker {{f.next_follow_on ? '' : 'placeholder'}}">{{f.next_follow_on || '选一个日期'}}</view>
+      </picker>
+      <view class="quick">
+        <view wx:for="{{quick}}" wx:key="label" class="opt {{f.next_follow_on === item.day ? 'opt-on' : ''}}" bindtap="onChoose" data-k="next_follow_on" data-v="{{item.day}}">{{item.label}}</view>
+        <view wx:if="{{f.next_follow_on}}" class="opt" bindtap="onClear" data-k="next_follow_on">清除</view>
+      </view>
+      <view class="hint">还在跟进的客户必须有下次时间；D 类和“暂不跟进”可以不填。</view>
+    </view>
+    <view class="field">
+      <view class="field-label">沟通日期</view>
+      <picker mode="date" value="{{f.contact_on}}" end="{{today}}" data-k="contact_on" bindchange="onDate">
+        <view class="picker">{{f.contact_on}}</view>
+      </picker>
+    </view>
+    <view class="btn btn-primary {{busy ? 'btn-off' : ''}}" hover-class="btn-hover" bindtap="save">保存这次跟进</view>
+  </view>
+
+  <view wx:if="{{product}}" class="card">
+    <view class="card-title">匹配的班型<text class="link small" bindtap="go" data-url="/pages/product/index?id={{product.id}}">看产品卡 ›</text></view>
+    <view>{{product.name}} · {{product.fee_text}}</view>
+    <view wx:if="{{product.pending}}" class="warn mt">这张产品卡还有 {{product.pending}} 项没核实。报价前先对着合作协议和合同核实。</view>
+    <block wx:if="{{quote}}">
+      <view class="field-label mt">报价话术（已带上这张卡里核实过的内容）</view>
+      <view class="quote"><text class="pre" user-select="true">{{quote}}</text></view>
+      <view class="btn btn-small mt" hover-class="btn-hover" bindtap="copy" data-text="{{quote}}" data-done="已复制，去微信里粘贴">复制话术</view>
+    </block>
+  </view>
+
+  <view wx:if="{{referrer || referred.length}}" class="card">
+    <view class="card-title">转介绍</view>
+    <view wx:if="{{referrer}}" class="menu" bindtap="go" data-url="/pages/customer/index?id={{referrer.id}}"><view class="menu-main">推荐人：{{referrer.name}}</view><view class="arrow">›</view></view>
+    <view wx:for="{{referred}}" wx:key="id" class="menu" bindtap="go" data-url="/pages/customer/index?id={{item.id}}"><view class="menu-main">推荐了：{{item.name}}</view><view class="menu-side">{{item.status}}</view><view class="arrow">›</view></view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">跟进记录（{{log.length}}）</view>
+    <view wx:for="{{log}}" wx:key="id" class="log">
+      <view class="log-head"><text>{{item.at}} · {{item.who || '—'}}</text><text>{{item.kind_label}}</text></view>
+      <text class="pre" user-select="true">{{item.summary}}</text>
+      <view wx:if="{{item.next || item.next_action}}" class="small muted">下次：{{item.next || '未定'}}<text wx:if="{{item.next_action}}"> · {{item.next_action}}</text></view>
+    </view>
+  </view>
+
+  <view wx:if="{{can_delete}}" class="btn btn-danger btn-plain" hover-class="btn-hover" bindtap="remove">删除这位客户</view>
+</view>
