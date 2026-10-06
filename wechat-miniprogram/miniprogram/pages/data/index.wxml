@@ -1,0 +1,56 @@
+<view class="wrap tabs-wrap">
+  <view class="seg">
+    <view class="seg-item {{tab === 'board' ? 'seg-on' : ''}}" bindtap="setTab" data-v="board">看板</view>
+    <view class="seg-item {{tab === 'daily' ? 'seg-on' : ''}}" bindtap="setTab" data-v="daily">每日数据</view>
+  </view>
+</view>
+<include src="../../tpl/state.wxml"/>
+
+<view wx:if="{{!loading && !error && tab === 'board'}}" class="wrap wrap-top">
+  <include src="../../tpl/scope.wxml"/>
+  <view wx:if="{{!today_filled}}" class="warn" bindtap="setTab" data-v="daily">今天的曝光数还没填。每天收工前花一分钟记一下 <text class="link">去填 ›</text></view>
+  <view class="card">
+    <view class="card-title">招生漏斗<text class="small muted">本周 {{week_label}}</text></view>
+    <view class="trow thead"><view class="tcell tname">环节</view><view class="tcell">本周</view><view class="tcell">上周</view><view class="tcell">累计</view></view>
+    <view wx:for="{{rows}}" wx:key="key" class="trow" bindtap="hint" data-i="{{index}}">
+      <view class="tcell tname">{{item.label}}</view>
+      <view class="tcell"><view class="tnum">{{item.this_week}}</view><view class="trate">{{item.r_this}}</view></view>
+      <view class="tcell"><view class="tnum">{{item.last_week}}</view><view class="trate">{{item.r_last}}</view></view>
+      <view class="tcell"><view class="tnum">{{item.total}}</view><view class="trate">{{item.r_total}}</view></view>
+    </view>
+    <view class="tiny muted mt">百分比是相对上一个环节的转化。各环节按客户第一次走到那一步的日期统计。点某一行看这一步偏低时先查什么。</view>
+  </view>
+  <view class="card">
+    <view class="card-title">现在手上</view>
+    <view class="stats">
+      <view class="stat"><view class="stat-num">{{fc.active}}</view><view class="stat-label">跟进中</view></view>
+      <view class="stat"><view class="stat-num">{{fc.grade_a}}</view><view class="stat-label">其中 A 类</view></view>
+      <view class="stat {{fc.overdue ? 'stat-hot' : ''}}"><view class="stat-num">{{fc.overdue}}</view><view class="stat-label">跟进逾期</view></view>
+      <view class="stat"><view class="stat-num">{{dc.active}}</view><view class="stat-label">交付中</view></view>
+      <view class="stat {{issues ? 'stat-hot' : ''}}"><view class="stat-num">{{issues}}</view><view class="stat-label">异常未关</view></view>
+    </view>
+  </view>
+</view>
+
+<view wx:if="{{!loading && !error && tab === 'daily'}}" class="wrap wrap-top wrap-bar">
+  <include src="../../tpl/scope.wxml"/>
+  <include src="../../tpl/errors.wxml"/>
+  <view class="info">曝光和加微数要自己记：每天收工前填一次。新增、咨询、A 类、定金、报名是从客户记录里自动数出来的。</view>
+  <view class="cal-nav">
+    <view class="btn btn-small" hover-class="btn-hover" bindtap="turn" data-end="{{prev_end}}">‹ 更早</view>
+    <view class="small bold">{{range_label}}</view>
+    <view class="btn btn-small {{next_end ? '' : 'btn-off'}}" hover-class="btn-hover" bindtap="turn" data-end="{{next_end}}">更晚 ›</view>
+  </view>
+  <view wx:for="{{days}}" wx:key="day" class="card">
+    <view class="card-title"><text>{{item.label}} {{item.weekday}}<text wx:if="{{item.is_today}}" class="chip chip-amber">今天</text></text>
+      <text class="tiny muted">新增 {{item.registered}} · 咨询 {{item.consulted}} · A {{item.grade_a}} · 定金 {{item.deposit}} · 报名 {{item.enrolled}}</text></view>
+    <view class="pair">
+      <view class="pair-item"><view class="field-label">曝光</view><input class="input" type="number" value="{{item.exposure}}" data-k="exposure_{{item.day}}" bindinput="onField" maxlength="9" placeholder="播放量、发放数"/></view>
+      <view class="pair-item"><view class="field-label">加微信</view><input class="input" type="number" value="{{item.wechat}}" data-k="wechat_{{item.day}}" bindinput="onField" maxlength="9" placeholder="当天加了几位"/></view>
+    </view>
+    <input class="input mt" value="{{item.summary}}" data-k="summary_{{item.day}}" bindinput="onField" maxlength="500" placeholder="当天做了什么，比如：摆点两小时、发了 2 条短视频"/>
+  </view>
+</view>
+<view wx:if="{{!loading && !error && tab === 'daily'}}" class="bar">
+  <view class="btn btn-primary {{busy ? 'btn-off' : ''}}" hover-class="btn-hover" bindtap="save">保存这 14 天</view>
+</view>
