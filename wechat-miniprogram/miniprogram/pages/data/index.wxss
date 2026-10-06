@@ -1,0 +1,12 @@
+.tabs-wrap { padding-bottom: 0; }
+.tabs-wrap .seg { margin-bottom: 0; }
+.wrap-top { padding-top: 22rpx; }
+.trow { display: flex; align-items: center; padding: 16rpx 0; border-top: 1rpx solid #eef1f4; }
+.thead { border-top: none; color: #6b7785; font-size: 22rpx; padding-top: 0; }
+.tcell { flex: 1; text-align: right; }
+.tname { flex: 1.3; text-align: left; font-size: 28rpx; }
+.tnum { font-size: 32rpx; font-weight: 600; color: #163a5a; line-height: 1.2; }
+.trate { font-size: 20rpx; color: #6b7785; min-height: 28rpx; }
+.cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20rpx; }
+.pair { display: flex; margin: 0 -10rpx; }
+.pair-item { flex: 1; padding: 0 10rpx; }

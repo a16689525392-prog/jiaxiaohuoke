@@ -1,0 +1,28 @@
+<include src="../../tpl/state.wxml"/>
+<view wx:if="{{!loading && !error}}" class="wrap">
+  <include src="../../tpl/scope.wxml"/>
+  <view class="search">
+    <input class="input flex-1" value="{{q}}" bindinput="onQuery" bindconfirm="search" confirm-type="search" placeholder="搜学员称呼、联系方式"/>
+    <view class="btn btn-small ml" hover-class="btn-hover" bindtap="search">搜索</view>
+  </view>
+  <scroll-view scroll-x class="scroll-x">
+    <view wx:for="{{filters.flags}}" wx:key="value" class="opt {{flag === item.value ? 'opt-on' : ''}}" bindtap="setFlag" data-v="{{item.value}}">{{item.label}}</view>
+  </scroll-view>
+  <view class="filters">
+    <picker class="filter" mode="selector" range="{{filters.stages}}" range-key="label" value="{{idx.stage}}" data-k="stage" bindchange="setFilter">
+      <view class="filter-box">{{filters.stages[idx.stage].label}}</view>
+    </picker>
+    <picker wx:if="{{filters.owners.length && !mine}}" class="filter" mode="selector" range="{{filters.owners}}" range-key="label" value="{{idx.owner}}" data-k="owner" bindchange="setFilter">
+      <view class="filter-box">{{filters.owners[idx.owner].label}}</view>
+    </picker>
+    <view class="filter"><view class="filter-box link" bindtap="go" data-url="/pages/issues/index">异常台账 ›</view></view>
+  </view>
+
+  <view class="section-title">共 {{total}} 位 · 没排期的排最前，然后按下次动作日期</view>
+  <view class="card">
+    <view wx:if="{{!items.length}}" class="empty">{{empty_text}}</view>
+    <block wx:for="{{items}}" wx:for-item="s" wx:key="id">
+      <include src="../../tpl/student-row.wxml"/>
+    </block>
+  </view>
+</view>

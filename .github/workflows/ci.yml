@@ -24,6 +24,24 @@ jobs:
       - name: 运行测试
         run: python -m unittest discover -s tests -v
 
+  miniprogram:
+    name: 小程序测试 (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["18", "20", "22"]
+    defaults:
+      run:
+        working-directory: wechat-miniprogram
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: 运行测试
+        run: node --test tests/test_*.js
+
   shell:
     name: 脚本语法检查
     runs-on: ubuntu-latest

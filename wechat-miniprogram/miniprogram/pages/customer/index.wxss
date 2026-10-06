@@ -1,0 +1,2 @@
+.profile { margin-top: 14rpx; }
+.quote { background: #f7f9fb; border-radius: 12rpx; padding: 20rpx 22rpx; font-size: 26rpx; }

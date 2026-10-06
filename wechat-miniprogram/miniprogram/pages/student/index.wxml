@@ -1,0 +1,146 @@
+<include src="../../tpl/state.wxml"/>
+<view wx:if="{{!loading && !error}}" class="wrap wrap-bar">
+  <view class="card">
+    <view class="h1">{{s.name}}<text class="chip chip-blue">{{s.stage}}</text></view>
+    <view class="muted small mt">{{s.product || '班型未填'}} · {{s.enrolled}} 报名 · 销售 {{s.sales_owner || '未指定'}}</view>
+    <view wx:if="{{s.active}}" class="small">下次动作：<text class="{{s.due_cls}}">{{s.due_label}}</text><text wx:if="{{s.exam_label}}"> · {{s.exam_label}}</text></view>
+    <view wx:if="{{s.contact}}" class="kv"><view class="kv-k">联系方式</view><view class="kv-v"><text user-select="true">{{s.contact}}</text><text class="link ml" bindtap="copy" data-text="{{s.contact}}">复制</text></view></view>
+    <view class="btn-row mt">
+      <view class="btn btn-small" hover-class="btn-hover" bindtap="go" data-url="/pages/customer/index?id={{s.customer_id}}">销售阶段的记录</view>
+      <view wx:if="{{s.product_id}}" class="btn btn-small" hover-class="btn-hover" bindtap="go" data-url="/pages/product/index?id={{s.product_id}}">看产品卡</view>
+    </view>
+  </view>
+
+  <include src="../../tpl/errors.wxml"/>
+
+  <view class="card">
+    <view class="card-title">下一步</view>
+    <view class="field">
+      <view class="field-label">下一步动作</view>
+      <input class="input" value="{{f.next_action}}" data-k="next_action" bindinput="onField" maxlength="120" placeholder="比如：催体检表、提醒科目一预约"/>
+    </view>
+    <view class="field">
+      <view class="field-label">下次动作日期<text wx:if="{{need_date}}" class="req">*</text></view>
+      <picker mode="date" value="{{f.next_action_on || today}}" start="{{today}}" data-k="next_action_on" bindchange="onDate">
+        <view class="picker {{f.next_action_on ? '' : 'placeholder'}}">{{f.next_action_on || '选一个日期'}}</view>
+      </picker>
+      <view class="quick">
+        <view wx:for="{{quick}}" wx:key="label" class="opt {{f.next_action_on === item.day ? 'opt-on' : ''}}" bindtap="onChoose" data-k="next_action_on" data-v="{{item.day}}">{{item.label}}</view>
+        <view wx:if="{{f.next_action_on}}" class="opt" bindtap="onClear" data-k="next_action_on">清除</view>
+      </view>
+      <view class="hint">交付中的学员必须有下次动作日期，别让学员卡在你以为已经结束的环节里。</view>
+    </view>
+    <view class="field">
+      <view class="field-label">阶段</view>
+      <picker mode="selector" range="{{stages}}" value="{{idx.stage}}" data-k="stage" data-list="stages" bindchange="onPick">
+        <view class="picker">{{f.stage}}</view>
+      </picker>
+      <view class="hint">一般不用手动改：资料齐全、考试通过后会自动进到下一个阶段。</view>
+    </view>
+    <view wx:if="{{can_all}}" class="field">
+      <view class="field-label">交付负责人</view>
+      <picker mode="selector" range="{{members}}" range-key="name" value="{{idx.owner_id}}" data-k="owner_id" data-list="members" bindchange="onPick">
+        <view class="picker">{{label.owner_id || '未指定'}}</view>
+      </picker>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">资料</view>
+    <view class="opts">
+      <view class="opt {{f.docs_status === '齐全' ? 'opt-on' : ''}}" bindtap="pickOne" data-k="docs_status" data-v="齐全">资料齐全</view>
+      <view class="opt {{f.docs_status === '缺资料' ? 'opt-on' : ''}}" bindtap="pickOne" data-k="docs_status" data-v="缺资料">缺资料</view>
+    </view>
+    <view wx:if="{{f.docs_status === '缺资料'}}" class="field mt">
+      <view class="field-label">还缺什么</view>
+      <input class="input" value="{{f.docs_missing}}" data-k="docs_missing" bindinput="onField" maxlength="120" placeholder="比如：体检表、照片回执"/>
+    </view>
+  </view>
+
+  <view class="section-title">交付清单 · 点标题展开。每一项都写了“做到什么算完成”和“容易踩的坑”</view>
+  <view wx:for="{{blocks}}" wx:for-item="b" wx:for-index="bi" wx:key="key" class="card {{b.current ? 'block-current' : ''}}">
+    <view class="card-title" bindtap="fold" data-i="{{bi}}">
+      <text>{{b.title}}<text wx:if="{{b.current}}" class="chip chip-amber">当前阶段</text></text>
+      <text class="small muted">{{b.done}} / {{b.total}} {{b.open ? '∧' : '∨'}}</text>
+    </view>
+    <block wx:if="{{b.open}}">
+      <view wx:for="{{b.items}}" wx:for-item="it" wx:for-index="ii" wx:key="key" class="check" bindtap="tick" data-b="{{bi}}" data-i="{{ii}}">
+        <view class="box {{it.done ? 'box-on' : ''}}">{{it.done ? '✓' : ''}}</view>
+        <view class="check-main">
+          <view class="{{it.done ? 'muted' : 'bold'}}">{{it.todo}}</view>
+          <view class="tiny muted">做到：{{it.result}}</view>
+          <view class="tiny trap">别这样：{{it.trap}}</view>
+        </view>
+      </view>
+
+      <block wx:for="{{subjects}}" wx:for-item="sub" wx:key="key">
+        <view wx:if="{{sub.key === b.key}}" class="exam">
+          <view class="field">
+            <view class="field-label">{{sub.name}}考试日期</view>
+            <picker mode="date" value="{{f[sub.key + '_exam_on'] || today}}" data-k="{{sub.key}}_exam_on" bindchange="onDate">
+              <view class="picker {{f[sub.key + '_exam_on'] ? '' : 'placeholder'}}">{{f[sub.key + '_exam_on'] || '还没约考'}}</view>
+            </picker>
+            <view wx:if="{{f[sub.key + '_exam_on']}}" class="quick"><view class="opt" bindtap="onClear" data-k="{{sub.key}}_exam_on">清除日期</view></view>
+          </view>
+          <view class="field">
+            <view class="field-label">{{sub.name}}结果</view>
+            <view class="opts">
+              <view wx:for="{{results}}" wx:for-item="res" wx:key="*this" class="opt {{f[sub.key + '_result'] === res ? 'opt-on' : ''}}" bindtap="pickOne" data-k="{{sub.key}}_result" data-v="{{res}}">{{res}}</view>
+            </view>
+          </view>
+          <view wx:if="{{sub.key === 'k2'}}" class="field">
+            <view class="field-label">练车预约</view>
+            <view class="opts">
+              <view class="opt {{f.k2_booking === '正常' ? 'opt-on' : ''}}" bindtap="pickOne" data-k="k2_booking" data-v="正常">正常</view>
+              <view class="opt {{f.k2_booking === '约不到' ? 'opt-on' : ''}}" bindtap="pickOne" data-k="k2_booking" data-v="约不到">约不到车</view>
+            </view>
+            <view class="hint">约不到车要记进异常台账：发生时间、联系了谁、预计什么时候解决。</view>
+          </view>
+        </view>
+      </block>
+
+      <view wx:if="{{b.key === 'k4'}}" class="exam">
+        <view class="field">
+          <view class="field-label">拿证日期</view>
+          <picker mode="date" value="{{f.license_on || today}}" end="{{today}}" data-k="license_on" bindchange="onDate">
+            <view class="picker {{f.license_on ? '' : 'placeholder'}}">{{f.license_on || '还没拿证'}}</view>
+          </picker>
+          <view wx:if="{{f.license_on}}" class="quick"><view class="opt" bindtap="onClear" data-k="license_on">清除日期</view></view>
+        </view>
+        <view class="field"><view class="field-label">回访：哪一步最顺</view><textarea class="textarea" value="{{f.visit_smooth}}" data-k="visit_smooth" bindinput="onField" maxlength="600" auto-height placeholder="学员自己的原话"/></view>
+        <view class="field"><view class="field-label">回访：哪一步最卡</view><textarea class="textarea" value="{{f.visit_hard}}" data-k="visit_hard" bindinput="onField" maxlength="600" auto-height placeholder="学员自己的原话"/></view>
+        <view class="field"><view class="field-label">回访：报名前最担心什么</view><textarea class="textarea" value="{{f.visit_worry}}" data-k="visit_worry" bindinput="onField" maxlength="600" auto-height placeholder="这些会变成下一批内容的选题"/></view>
+      </view>
+
+      <view wx:if="{{b.key === 'ref'}}" class="exam">
+        <view class="field">
+          <view class="field-label">愿不愿意推荐给同学</view>
+          <view class="opts">
+            <view wx:for="{{willing}}" wx:key="*this" class="opt {{f.refer_willing === item ? 'opt-on' : ''}}" bindtap="pickOne" data-k="refer_willing" data-v="{{item}}">{{item}}</view>
+          </view>
+          <view class="hint">转介绍不交入门费、不发展下线、不做层级返利；规则见“资料 → 转介绍”。</view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view class="card">
+    <view class="card-title">异常记录<text class="link small" bindtap="go" data-url="/pages/issue-edit/index?student={{s.id}}">＋ 记一条异常</text></view>
+    <view wx:if="{{!issues.length}}" class="muted small">没有异常。学员说约不到车、费用有疑问、排期变了，都记在这里。</view>
+    <view wx:for="{{issues}}" wx:key="id" class="row" hover-class="row-hover" bindtap="go" data-url="/pages/issue-edit/index?id={{item.id}}">
+      <view class="row-main">
+        <view class="row-title"><text class="chip chip-first {{item.closed ? '' : 'chip-red'}}">{{item.status}}</text><text class="small ml">{{item.occurred}} {{item.kind}}</text></view>
+        <view class="row-sub small">{{item.description}}</view>
+      </view>
+      <view class="arrow">›</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">备注</view>
+    <textarea class="textarea" value="{{f.remark}}" data-k="remark" bindinput="onField" maxlength="1000" auto-height placeholder="其他需要记住的情况"/>
+  </view>
+</view>
+<view wx:if="{{!loading && !error}}" class="bar">
+  <view class="btn btn-primary {{busy ? 'btn-off' : ''}}" hover-class="btn-hover" bindtap="save">保存</view>
+</view>

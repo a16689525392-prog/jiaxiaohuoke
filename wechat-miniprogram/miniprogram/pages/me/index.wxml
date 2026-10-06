@@ -1,0 +1,36 @@
+<include src="../../tpl/state.wxml"/>
+<view wx:if="{{!loading && !error}}" class="wrap">
+  <view class="card">
+    <view class="flex">
+      <view class="avatar">{{initial}}</view>
+      <view class="flex-1">
+        <view class="h1">{{me.name}}<text class="chip {{me.is_admin ? 'chip-blue' : ''}}">{{me.is_admin ? '管理员' : '成员'}}</text></view>
+        <view class="muted small">{{team.name}}</view>
+      </view>
+      <view class="btn btn-small" hover-class="btn-hover" bindtap="rename">改称呼</view>
+    </view>
+    <view wx:if="{{!me.sees_all}}" class="tiny muted mt">团队设置为“成员只看自己的”：你看到的是自己负责的客户和学员。</view>
+  </view>
+
+  <view class="card">
+    <view class="menu" hover-class="row-hover" bindtap="go" data-url="/pages/calendar/index"><view class="menu-main">跟进日历</view><view class="arrow">›</view></view>
+    <view class="menu" hover-class="row-hover" bindtap="go" data-url="/pages/data/index"><view class="menu-main">数据看板</view><view class="arrow">›</view></view>
+    <view class="menu" hover-class="row-hover" bindtap="go" data-url="/pages/data/index?tab=daily"><view class="menu-main">每日数据</view><view class="menu-side">曝光、加微信</view><view class="arrow">›</view></view>
+    <view class="menu" hover-class="row-hover" bindtap="go" data-url="/pages/issues/index"><view class="menu-main">异常台账</view><view class="arrow">›</view></view>
+    <view class="menu" hover-class="row-hover" bindtap="go" data-url="/pages/referrals/index"><view class="menu-main">转介绍</view><view class="arrow">›</view></view>
+    <view class="menu" hover-class="row-hover" bindtap="go" data-url="/pages/guide/index"><view class="menu-main">开始与红线</view><view class="arrow">›</view></view>
+  </view>
+
+  <block wx:if="{{me.is_admin}}">
+    <view class="section-title">管理</view>
+    <view class="card">
+      <view class="menu" hover-class="row-hover" bindtap="go" data-url="/pages/team/index"><view class="menu-main">成员</view><view wx:if="{{pending_count}}" class="menu-side due-over">{{pending_count}} 人等待通过</view><view wx:else class="menu-side">邀请码 {{team.invite_code}}</view><view class="arrow">›</view></view>
+      <view class="menu" hover-class="row-hover" bindtap="go" data-url="/pages/settings/index"><view class="menu-main">团队设置</view><view class="menu-side">{{team.members_only_own ? '成员只看自己的' : '团队内互相可见'}}</view><view class="arrow">›</view></view>
+      <view class="menu" hover-class="row-hover" bindtap="go" data-url="/pages/selftest/index"><view class="menu-main">自检</view><view class="menu-side">部署后跑一遍</view><view class="arrow">›</view></view>
+    </view>
+  </block>
+
+  <view class="btn btn-plain btn-danger" hover-class="btn-hover" bindtap="leave">退出团队</view>
+  <view class="tiny muted center mt">驾校招生助手 {{version}}</view>
+  <view class="tiny muted center">只登记业务必要的信息；不承诺包过、最低价和固定拿证天数。</view>
+</view>

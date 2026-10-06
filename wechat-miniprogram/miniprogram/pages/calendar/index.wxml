@@ -1,0 +1,37 @@
+<include src="../../tpl/state.wxml"/>
+<view wx:if="{{!loading && !error}}" class="wrap">
+  <include src="../../tpl/scope.wxml"/>
+  <view class="card">
+    <view class="cal-nav">
+      <view class="btn btn-small" hover-class="btn-hover" bindtap="shift" data-n="-4">‹ 前 4 周</view>
+      <view class="cal-range" bindtap="shift" data-n="0">{{range_label}}<text wx:if="{{offset !== 0}}" class="link"> · 回到本周</text></view>
+      <view class="btn btn-small" hover-class="btn-hover" bindtap="shift" data-n="4">后 4 周 ›</view>
+    </view>
+    <view class="cal-row cal-head"><view wx:for="{{weekdays}}" wx:key="*this" class="cal-cell">{{item}}</view></view>
+    <view wx:for="{{weeks}}" wx:for-item="week" wx:key="key" class="cal-row">
+      <view wx:for="{{week.days}}" wx:for-item="d" wx:key="day" class="cal-cell cal-day {{d.picked ? 'cal-picked' : ''}} {{d.is_today ? 'cal-today' : ''}} {{d.past ? 'cal-past' : ''}}" bindtap="pick" data-day="{{d.day}}">
+        <view class="cal-num">{{d.num}}</view>
+        <view wx:if="{{d.total}}" class="cal-count {{d.A ? 'cal-hot' : ''}}">{{d.total}} 人</view>
+        <view wx:if="{{d.todo || d.exam}}" class="cal-marks"><text wx:if="{{d.todo}}" class="cal-todo">办{{d.todo}}</text><text wx:if="{{d.exam}}" class="cal-exam">考{{d.exam}}</text></view>
+      </view>
+    </view>
+    <view class="tiny muted mt">“人”是要跟进的客户数，红色表示其中有 A 类；“办”是学员待办，“考”是考试。</view>
+  </view>
+
+  <view class="section-title">{{picked_label}} 要跟进的客户（{{customers.length}}）</view>
+  <view class="card">
+    <view wx:if="{{!customers.length}}" class="empty">这一天没有排跟进。</view>
+    <block wx:for="{{customers}}" wx:for-item="c" wx:key="id">
+      <include src="../../tpl/customer-row.wxml"/>
+    </block>
+  </view>
+
+  <block wx:if="{{students.length}}">
+    <view class="section-title">{{picked_label}} 学员待办和考试（{{students.length}}）</view>
+    <view class="card">
+      <block wx:for="{{students}}" wx:for-item="s" wx:key="id">
+        <include src="../../tpl/student-row.wxml"/>
+      </block>
+    </view>
+  </block>
+</view>

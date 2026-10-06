@@ -1,0 +1,13 @@
+<view class="row" hover-class="row-hover" bindtap="go" data-url="/pages/customer/index?id={{c.id}}">
+  <view class="row-main">
+    <view class="row-title">
+      <text class="name">{{c.name}}</text>
+      <text class="chip chip-{{c.grade || 'none'}}">{{c.grade_label}}</text>
+      <text class="chip">{{c.status}}</text>
+    </view>
+    <view class="row-sub muted small">{{c.channel || '渠道未填'}}<text wx:if="{{c.owner}}"> · {{c.owner}}</text></view>
+    <view wx:if="{{c.next_action}}" class="row-sub small">下一步：{{c.next_action}}</view>
+    <view wx:if="{{!c.next_action && c.note}}" class="row-sub small muted">{{c.note}}</view>
+  </view>
+  <view wx:if="{{c.active}}" class="row-side {{c.due_cls}}">{{c.due_label}}</view>
+</view>

@@ -1,0 +1,22 @@
+<include src="../../tpl/state.wxml"/>
+<view wx:if="{{!loading && !error}}" class="wrap">
+  <view class="info">学员说“约不到车”“费用不对”，不能只回一句“我帮你问问”。记下来：发生时间、联系了谁、预计什么时候解决；解决后回访确认，才算关闭。</view>
+  <view class="seg">
+    <view class="seg-item {{all ? '' : 'seg-on'}}" bindtap="setAll" data-v="0">没关闭的（{{open_count}}）</view>
+    <view class="seg-item {{all ? 'seg-on' : ''}}" bindtap="setAll" data-v="1">全部</view>
+  </view>
+  <view class="card">
+    <view wx:if="{{!items.length}}" class="empty">{{all ? '还没有记过异常。' : '没有未关闭的异常。'}}</view>
+    <view wx:for="{{items}}" wx:key="id" class="row" hover-class="row-hover" bindtap="go" data-url="/pages/issue-edit/index?id={{item.id}}">
+      <view class="row-main">
+        <view class="row-title"><text class="name">{{item.student_name || '不关联学员'}}</text><text class="chip {{item.closed ? '' : (item.status === '处理中' ? 'chip-red' : 'chip-amber')}}">{{item.status}}</text><text wx:if="{{item.kind}}" class="chip">{{item.kind}}</text></view>
+        <view class="row-sub small">{{item.description}}</view>
+        <view class="row-sub small muted">{{item.occurred}} 发生<text wx:if="{{item.contacted}}"> · 已联系 {{item.contacted}}</text><text wx:if="{{item.owner}}"> · {{item.owner}}</text></view>
+        <view wx:if="{{!item.solved && item.eta}}" class="row-sub small {{item.eta_overdue ? 'due-over' : 'muted'}}">预计 {{item.eta}} 解决{{item.eta_overdue ? '，已经过了' : ''}}</view>
+        <view wx:if="{{item.solved}}" class="row-sub small muted">{{item.solved}} 解决{{item.closed ? '，已回访' : '，还没回访'}}</view>
+      </view>
+      <view class="arrow">›</view>
+    </view>
+  </view>
+</view>
+<view wx:if="{{!loading && !error}}" class="fab" hover-class="btn-hover" bindtap="go" data-url="/pages/issue-edit/index">＋ 记一条异常</view>

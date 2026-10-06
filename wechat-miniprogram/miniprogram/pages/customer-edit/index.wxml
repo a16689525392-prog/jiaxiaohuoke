@@ -1,0 +1,120 @@
+<include src="../../tpl/state.wxml"/>
+<view wx:if="{{!loading && !error}}" class="wrap wrap-bar">
+  <include src="../../tpl/errors.wxml"/>
+  <view class="card">
+    <view class="card-title">基本情况</view>
+    <view class="field">
+      <view class="field-label">称呼<text class="req">*</text></view>
+      <input class="input" value="{{f.name}}" data-k="name" bindinput="onField" maxlength="40" placeholder="微信昵称或姓氏，比如“林同学”"/>
+    </view>
+    <view class="field">
+      <view class="field-label">联系方式</view>
+      <input class="input" value="{{f.contact}}" data-k="contact" bindinput="onField" maxlength="60" placeholder="微信号或手机号，够联系就行"/>
+      <view class="hint">只登记业务必要的信息。身份证号不要写进来。</view>
+    </view>
+    <view class="field">
+      <view class="field-label">来源渠道<text class="req">*</text></view>
+      <picker mode="selector" range="{{channels}}" range-key="name" value="{{idx.channel_id}}" data-k="channel_id" data-list="channels" bindchange="onPick">
+        <view class="picker {{label.channel_id ? '' : 'placeholder'}}">{{label.channel_id || '客户是从哪里来的'}}</view>
+      </picker>
+    </view>
+    <view class="field">
+      <view class="field-label">学校 / 单位</view>
+      <input class="input" value="{{f.school}}" data-k="school" bindinput="onField" maxlength="60" placeholder="比如：东区大学 大二"/>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">需求</view>
+    <view class="field">
+      <view class="field-label">想学车型</view>
+      <view class="opts"><view wx:for="{{vehicles}}" wx:key="*this" class="opt {{f.vehicle === item ? 'opt-on' : ''}}" bindtap="pickOne" data-k="vehicle" data-v="{{item}}">{{item}}</view></view>
+    </view>
+    <view class="field">
+      <view class="field-label">打算什么时候报名</view>
+      <view class="opts"><view wx:for="{{plans}}" wx:key="*this" class="opt {{f.plan === item ? 'opt-on' : ''}}" bindtap="pickOne" data-k="plan" data-v="{{item}}">{{item}}</view></view>
+    </view>
+    <view class="field">
+      <view class="field-label">最在意什么</view>
+      <view class="opts"><view wx:for="{{concerns}}" wx:key="*this" class="opt {{f.concern === item ? 'opt-on' : ''}}" bindtap="pickOne" data-k="concern" data-v="{{item}}">{{item}}</view></view>
+    </view>
+    <view class="field">
+      <view class="field-label">可练车时间</view>
+      <input class="input" value="{{f.slots}}" data-k="slots" bindinput="onField" maxlength="60" placeholder="比如：周末全天、周三下午"/>
+    </view>
+    <view class="field">
+      <view class="field-label">预算</view>
+      <input class="input" value="{{f.budget}}" data-k="budget" bindinput="onField" maxlength="40" placeholder="客户自己说的范围"/>
+    </view>
+    <view class="field">
+      <view class="field-label">匹配的班型</view>
+      <picker mode="selector" range="{{products}}" range-key="name" value="{{idx.product_id}}" data-k="product_id" data-list="products" bindchange="onPick">
+        <view class="picker {{f.product_id ? '' : 'placeholder'}}">{{label.product_id || '还没匹配'}}</view>
+      </picker>
+    </view>
+  </view>
+
+  <view wx:if="{{is_new}}" class="card">
+    <view class="card-title">分级和下一步</view>
+    <view class="field">
+      <view class="field-label">分级<text class="link ml" bindtap="toggleHelp">{{help ? '收起标准' : '分级标准'}}</text></view>
+      <view class="opts"><view wx:for="{{grades}}" wx:key="value" class="opt {{f.grade === item.value ? 'opt-on' : ''}}" bindtap="onChoose" data-k="grade" data-v="{{item.value}}">{{item.label}}</view></view>
+      <view wx:if="{{help}}" class="info mt"><view wx:for="{{grade_help}}" wx:key="grade"><text class="bold">{{item.grade}}</text>：{{item.text}}</view></view>
+    </view>
+    <view class="field">
+      <view class="field-label">当前状态</view>
+      <view class="opts"><view wx:for="{{statuses}}" wx:key="*this" class="opt {{f.status === item ? 'opt-on' : ''}}" bindtap="onChoose" data-k="status" data-v="{{item}}">{{item}}</view></view>
+      <view class="hint">收定金或正式报名，登记后在客户页里走“四项核对与报名”。</view>
+    </view>
+    <view class="field">
+      <view class="field-label">沟通要点 / 客户顾虑</view>
+      <textarea class="textarea" value="{{f.notes}}" data-k="notes" bindinput="onField" maxlength="2000" auto-height placeholder="客户问了什么、担心什么"/>
+    </view>
+    <view class="field">
+      <view class="field-label">下一步动作</view>
+      <input class="input" value="{{f.next_action}}" data-k="next_action" bindinput="onField" maxlength="120" placeholder="比如：发产品卡、问清可练车时间"/>
+    </view>
+    <view class="field">
+      <view class="field-label">下次跟进时间<text class="req">*</text></view>
+      <picker mode="date" value="{{f.next_follow_on || today}}" start="{{today}}" data-k="next_follow_on" bindchange="onDate">
+        <view class="picker {{f.next_follow_on ? '' : 'placeholder'}}">{{f.next_follow_on || '选一个日期'}}</view>
+      </picker>
+      <view class="quick">
+        <view wx:for="{{quick}}" wx:key="label" class="opt {{f.next_follow_on === item.day ? 'opt-on' : ''}}" bindtap="onChoose" data-k="next_follow_on" data-v="{{item.day}}">{{item.label}}</view>
+        <view wx:if="{{f.next_follow_on}}" class="opt" bindtap="onClear" data-k="next_follow_on">清除</view>
+      </view>
+      <view class="hint">没有时间点的跟进，最后会变成谁都以为别人会跟。D 类和“暂不跟进”可以不填。</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">其他</view>
+    <view wx:if="{{can_all}}" class="field">
+      <view class="field-label">负责人</view>
+      <picker mode="selector" range="{{members}}" range-key="name" value="{{idx.owner_id}}" data-k="owner_id" data-list="members" bindchange="onPick">
+        <view class="picker">{{label.owner_id || '未指定'}}</view>
+      </picker>
+    </view>
+    <view class="field">
+      <view class="field-label">推荐人（转介绍来的才选）</view>
+      <picker mode="selector" range="{{referrers}}" range-key="name" value="{{idx.referrer_id}}" data-k="referrer_id" data-list="referrers" bindchange="onPick">
+        <view class="picker {{f.referrer_id ? '' : 'placeholder'}}">{{label.referrer_id || '没有推荐人'}}</view>
+      </picker>
+      <view class="hint">只能选已正式报名的学员，或者已经推荐过别人的人。</view>
+    </view>
+    <view class="field">
+      <view class="field-label">登记日期</view>
+      <picker mode="date" value="{{f.registered_on}}" end="{{today}}" data-k="registered_on" bindchange="onDate">
+        <view class="picker">{{f.registered_on}}</view>
+      </picker>
+    </view>
+    <view class="field">
+      <view class="field-label">备注</view>
+      <textarea class="textarea" value="{{f.remark}}" data-k="remark" bindinput="onField" maxlength="1000" auto-height placeholder="其他需要记住的情况"/>
+    </view>
+  </view>
+</view>
+<view wx:if="{{!loading && !error}}" class="bar">
+  <view wx:if="{{is_new}}" class="btn" hover-class="btn-hover" bindtap="saveAgain">保存并再登记一位</view>
+  <view class="btn btn-primary {{busy ? 'btn-off' : ''}}" hover-class="btn-hover" bindtap="save">保存</view>
+</view>

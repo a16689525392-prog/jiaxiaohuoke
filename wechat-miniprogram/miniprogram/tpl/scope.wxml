@@ -1,0 +1,4 @@
+<view wx:if="{{can_all}}" class="seg">
+  <view class="seg-item {{mine ? '' : 'seg-on'}}" bindtap="setMine" data-v="0">全团队</view>
+  <view class="seg-item {{mine ? 'seg-on' : ''}}" bindtap="setMine" data-v="1">只看我的</view>
+</view>

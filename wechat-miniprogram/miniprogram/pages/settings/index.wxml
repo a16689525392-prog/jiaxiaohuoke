@@ -1,0 +1,44 @@
+<include src="../../tpl/state.wxml"/>
+<view wx:if="{{!loading && !error}}" class="wrap wrap-bar">
+  <include src="../../tpl/errors.wxml"/>
+  <view class="card">
+    <view class="card-title">团队</view>
+    <view class="field">
+      <view class="field-label">团队名称<text class="req">*</text></view>
+      <input class="input" value="{{f.name}}" data-k="name" bindinput="onField" maxlength="30"/>
+    </view>
+    <view class="field">
+      <view class="field-label">统一入口</view>
+      <input class="input" value="{{f.unified_entry}}" data-k="unified_entry" bindinput="onField" maxlength="80" placeholder="比如：企业微信“东校区学车咨询”"/>
+      <view class="hint">每个渠道都用同一个企业微信或工作微信，不用个人号各接各的。</view>
+    </view>
+    <view class="field">
+      <view class="field-label">开始日期</view>
+      <picker mode="date" value="{{f.start_date}}" data-k="start_date" bindchange="onDate"><view class="picker">{{f.start_date}}</view></picker>
+      <view class="hint">“开始与红线”里的四周计划从这一天算起。</view>
+    </view>
+    <view class="check" bindtap="onToggle" data-k="members_only_own">
+      <view class="box {{f.members_only_own ? 'box-on' : ''}}">{{f.members_only_own ? '✓' : ''}}</view>
+      <view class="check-main">成员只能看到自己负责的客户和学员<view class="tiny muted">不勾：团队里互相看得到。管理员始终能看到全部。</view></view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">转介绍的公开规则</view>
+    <view class="card-note">写清楚并公开：奖励是什么、什么时候发、什么情况不算。</view>
+    <view wx:for="{{rules}}" wx:key="key" class="field">
+      <view class="field-label">{{item.label}}</view>
+      <textarea class="textarea short" value="{{f[item.key]}}" data-k="{{item.key}}" bindinput="onField" maxlength="300" auto-height placeholder="例：{{item.example}}"/>
+    </view>
+    <view wx:for="{{red_lines}}" wx:key="*this" class="tiny muted">· {{item}}</view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">解散团队</view>
+    <view class="small muted">删除这个团队和它的全部数据：客户、跟进记录、学员、异常、产品卡、话术、渠道、每日数据，所有成员都会被移出。删除后找不回来。只是自己不想用了，请先把别人设为管理员，再在“我的”里退出团队。</view>
+    <view class="btn btn-danger mt" hover-class="btn-hover" bindtap="dissolve">解散团队…</view>
+  </view>
+</view>
+<view wx:if="{{!loading && !error}}" class="bar">
+  <view class="btn btn-primary {{busy ? 'btn-off' : ''}}" hover-class="btn-hover" bindtap="save">保存</view>
+</view>

@@ -1,0 +1,66 @@
+<include src="../../tpl/state.wxml"/>
+<view wx:if="{{!loading && !error}}" class="wrap">
+  <view class="hero">
+    <view class="h1">驾校招生助手</view>
+    <view class="muted mt">招生团队自己用的工作台：登记客户、排跟进时间、付款前四项核对、按节点做交付。</view>
+  </view>
+
+  <block wx:if="{{state === 'pending'}}">
+    <view class="card">
+      <view class="card-title">等待管理员通过</view>
+      <view>你已经申请加入“{{team_name}}”，称呼是“{{my_name}}”。请联系团队管理员，在“我的 → 成员”里点通过。</view>
+      <view class="btn btn-primary mt" hover-class="btn-hover" bindtap="retry">刷新看看</view>
+      <view class="btn btn-plain mt" hover-class="btn-hover" bindtap="leave" data-text="撤回加入“{{team_name}}”的申请？">撤回申请</view>
+    </view>
+  </block>
+
+  <block wx:elif="{{state === 'disabled'}}">
+    <view class="card">
+      <view class="card-title">账号已停用</view>
+      <view>你在“{{team_name}}”的账号已被管理员停用，暂时看不到团队的数据。有疑问请联系团队管理员。</view>
+      <view class="btn btn-primary mt" hover-class="btn-hover" bindtap="retry">刷新看看</view>
+      <view class="btn btn-plain mt" hover-class="btn-hover" bindtap="leave" data-text="退出“{{team_name}}”？退出后可以加入别的团队。">退出这个团队</view>
+    </view>
+  </block>
+
+  <block wx:else>
+    <view class="seg">
+      <view class="seg-item {{tab === 'join' ? 'seg-on' : ''}}" bindtap="setTab" data-v="join">加入团队</view>
+      <view class="seg-item {{tab === 'create' ? 'seg-on' : ''}}" bindtap="setTab" data-v="create">创建团队</view>
+    </view>
+    <include src="../../tpl/errors.wxml"/>
+
+    <view wx:if="{{tab === 'join'}}" class="card">
+      <view class="card-note">向团队管理员要邀请码。提交后要等管理员通过，才能看到团队的数据。</view>
+      <view class="field">
+        <view class="field-label">邀请码<text class="req">*</text></view>
+        <input class="input" value="{{f.invite}}" data-k="invite" bindinput="onField" placeholder="8 位字母和数字" maxlength="12"/>
+      </view>
+      <view class="field">
+        <view class="field-label">你的称呼<text class="req">*</text></view>
+        <input class="input" value="{{f.my_name}}" data-k="my_name" bindinput="onField" placeholder="团队里的人怎么叫你" maxlength="20"/>
+      </view>
+      <view class="btn btn-primary" hover-class="btn-hover" bindtap="join">申请加入</view>
+    </view>
+
+    <view wx:if="{{tab === 'create'}}" class="card">
+      <view class="card-note">创建后你就是这个团队的管理员，再把邀请码发给同事。每个团队的数据互相看不到。</view>
+      <view class="field">
+        <view class="field-label">团队名称<text class="req">*</text></view>
+        <input class="input" value="{{f.team_name}}" data-k="team_name" bindinput="onField" placeholder="比如：东校区招生组" maxlength="30"/>
+      </view>
+      <view class="field">
+        <view class="field-label">你的称呼<text class="req">*</text></view>
+        <input class="input" value="{{f.my_name}}" data-k="my_name" bindinput="onField" placeholder="团队里的人怎么叫你" maxlength="20"/>
+      </view>
+      <view wx:if="{{need_code}}" class="field">
+        <view class="field-label">创建口令<text class="req">*</text></view>
+        <input class="input" value="{{f.code}}" data-k="code" bindinput="onField" placeholder="由部署这个小程序的人提供" maxlength="40"/>
+        <view class="hint">口令写在云函数的 config.js 里，用来防止不相干的人随便建团队。</view>
+      </view>
+      <view class="btn btn-primary" hover-class="btn-hover" bindtap="create">创建团队</view>
+    </view>
+  </block>
+
+  <view class="tiny muted center mt">只登记业务必要的信息；不承诺包过、最低价和固定拿证天数。</view>
+</view>

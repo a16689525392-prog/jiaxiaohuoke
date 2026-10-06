@@ -1,0 +1,66 @@
+<include src="../../tpl/state.wxml"/>
+<view wx:if="{{!loading && !error}}" class="wrap">
+  <view class="head">
+    <view class="h1">{{date_label}}</view>
+    <view class="muted small">{{team}} · {{me}}</view>
+  </view>
+  <include src="../../tpl/scope.wxml"/>
+
+  <view wx:if="{{hints.length}}" class="card">
+    <view class="card-title">开始之前还差这几件事</view>
+    <view wx:for="{{hints}}" wx:key="text" class="row">
+      <view class="row-main small">{{item.text}}</view>
+      <view class="btn btn-small ml" hover-class="btn-hover" bindtap="go" data-url="{{item.url}}">{{item.action}}</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">销售跟进<text class="link small" bindtap="go" data-url="/pages/calendar/index">跟进日历 ›</text></view>
+    <view class="stats">
+      <view class="stat {{fc.today ? 'stat-warm' : ''}}"><view class="stat-num">{{fc.today}}</view><view class="stat-label">今天要跟</view></view>
+      <view class="stat {{fc.overdue ? 'stat-hot' : ''}}"><view class="stat-num">{{fc.overdue}}</view><view class="stat-label">已逾期</view></view>
+      <view class="stat {{fc.unscheduled ? 'stat-hot' : ''}}"><view class="stat-num">{{fc.unscheduled}}</view><view class="stat-label">没排期</view></view>
+      <view class="stat"><view class="stat-num">{{fc.week}}</view><view class="stat-label">本周要跟</view></view>
+      <view class="stat"><view class="stat-num">{{fc.active}}</view><view class="stat-label">跟进中</view></view>
+    </view>
+  </view>
+
+  <view class="section-title">今天要跟进和已逾期的（{{due_total}}）· A 类排最前</view>
+  <view class="card">
+    <view wx:if="{{!due.length}}" class="empty">今天没有到期的跟进。</view>
+    <block wx:for="{{due}}" wx:for-item="c" wx:key="id">
+      <include src="../../tpl/customer-row.wxml"/>
+    </block>
+    <view wx:if="{{due_total > due.length}}" class="muted small center mt">只显示前 {{due.length}} 位，其余的在“客户”里看。</view>
+  </view>
+
+  <block wx:if="{{unscheduled.length}}">
+    <view class="section-title">还在跟进却没写下次时间的（{{unscheduled_total}}）</view>
+    <view class="card">
+      <block wx:for="{{unscheduled}}" wx:for-item="c" wx:key="id">
+        <include src="../../tpl/customer-row.wxml"/>
+      </block>
+    </view>
+  </block>
+
+  <view class="card">
+    <view class="card-title">学员交付<text class="link small" bindtap="go" data-url="/pages/issues/index">异常台账 {{issues}} 条 ›</text></view>
+    <view class="stats">
+      <view class="stat"><view class="stat-num">{{dc.active}}</view><view class="stat-label">交付中</view></view>
+      <view class="stat {{dc.due ? 'stat-warm' : ''}}"><view class="stat-num">{{dc.due}}</view><view class="stat-label">待办到期</view></view>
+      <view class="stat"><view class="stat-num">{{dc.exams7}}</view><view class="stat-label">7 天内考试</view></view>
+      <view class="stat {{dc.docs_missing ? 'stat-warm' : ''}}"><view class="stat-num">{{dc.docs_missing}}</view><view class="stat-label">缺资料</view></view>
+      <view class="stat {{dc.booking ? 'stat-hot' : ''}}"><view class="stat-num">{{dc.booking}}</view><view class="stat-label">约不到车</view></view>
+    </view>
+  </view>
+
+  <block wx:if="{{reminders.length}}">
+    <view class="section-title">交付提醒：待办到期的、7 天内要考试的</view>
+    <view class="card">
+      <block wx:for="{{reminders}}" wx:for-item="s" wx:key="id">
+        <include src="../../tpl/student-row.wxml"/>
+      </block>
+    </view>
+  </block>
+</view>
+<view wx:if="{{!loading && !error}}" class="fab" hover-class="btn-hover" bindtap="go" data-url="/pages/customer-edit/index">＋ 登记客户</view>

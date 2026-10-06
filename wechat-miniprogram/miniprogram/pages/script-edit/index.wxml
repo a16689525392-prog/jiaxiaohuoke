@@ -1,0 +1,32 @@
+<include src="../../tpl/state.wxml"/>
+<view wx:if="{{!loading && !error}}" class="wrap wrap-bar">
+  <include src="../../tpl/errors.wxml"/>
+  <view class="card">
+    <view class="field">
+      <view class="field-label">分组<text class="req">*</text></view>
+      <view class="opts"><view wx:for="{{groups}}" wx:key="*this" class="opt {{f.grp === item ? 'opt-on' : ''}}" bindtap="onChoose" data-k="grp" data-v="{{item}}">{{item}}</view></view>
+    </view>
+    <view class="field">
+      <view class="field-label">场景名称<text class="req">*</text></view>
+      <input class="input" value="{{f.scene}}" data-k="scene" bindinput="onField" maxlength="40" placeholder="比如：异议：训练场太远"/>
+    </view>
+    <view class="field">
+      <view class="field-label">什么时候用</view>
+      <input class="input" value="{{f.when_use}}" data-k="when_use" bindinput="onField" maxlength="120" placeholder="客户说了什么、处在哪一步时用"/>
+    </view>
+    <view class="field">
+      <view class="field-label">话术内容<text class="req">*</text></view>
+      <textarea class="textarea tall" value="{{f.body}}" data-k="body" bindinput="onField" maxlength="3000" auto-height placeholder="可以用【】占位，比如【总费用】【训练场位置】"/>
+      <view class="hint">能自动填的占位符：<text wx:for="{{tokens}}" wx:key="*this">【{{item}}】</text></view>
+      <view class="hint">不写“包过”“最低价”“几天拿证”这类承诺。</view>
+    </view>
+    <view class="field">
+      <view class="field-label">要点提醒</view>
+      <textarea class="textarea" value="{{f.tips}}" data-k="tips" bindinput="onField" maxlength="1000" auto-height placeholder="说这段话时要注意什么"/>
+    </view>
+  </view>
+  <view wx:if="{{f.id}}" class="btn btn-danger btn-plain" hover-class="btn-hover" bindtap="remove">删除这条话术</view>
+</view>
+<view wx:if="{{!loading && !error}}" class="bar">
+  <view class="btn btn-primary {{busy ? 'btn-off' : ''}}" hover-class="btn-hover" bindtap="save">保存</view>
+</view>

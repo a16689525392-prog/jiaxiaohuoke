@@ -1,0 +1,37 @@
+<include src="../../tpl/state.wxml"/>
+<view wx:if="{{!loading && !error}}" class="wrap">
+  <include src="../../tpl/errors.wxml"/>
+  <view class="card">
+    <view class="card-title">邀请同事加入“{{team_name}}”</view>
+    <view class="code"><text user-select="true">{{invite_code}}</text></view>
+    <view class="card-note">把邀请码发给同事。对方在小程序里选“加入团队”、填邀请码，然后回到这里点“通过”。</view>
+    <view class="btn-row">
+      <view class="btn btn-primary" hover-class="btn-hover" bindtap="copy" data-text="{{invite_code}}" data-done="邀请码已复制">复制邀请码</view>
+      <view class="btn" hover-class="btn-hover" bindtap="reset">换一个邀请码</view>
+    </view>
+  </view>
+
+  <block wx:if="{{pending.length}}">
+    <view class="section-title">等待你通过（{{pending.length}}）· 只通过你认识的人</view>
+    <view class="card">
+      <view wx:for="{{pending}}" wx:key="uid" class="row">
+        <view class="row-main"><view class="row-title"><text class="name">{{item.name}}</text></view><view class="row-sub small muted">{{item.joined}} 申请</view></view>
+        <view class="btn btn-small btn-primary" hover-class="btn-hover" bindtap="approve" data-uid="{{item.uid}}">通过</view>
+        <view class="btn btn-small ml" hover-class="btn-hover" bindtap="reject" data-uid="{{item.uid}}" data-name="{{item.name}}">拒绝</view>
+      </view>
+    </view>
+  </block>
+
+  <view class="section-title">成员（{{members.length}}）· 点一下可以改称呼、设管理员、停用</view>
+  <view class="card">
+    <view wx:for="{{members}}" wx:key="uid" class="row" hover-class="row-hover" bindtap="manage" data-i="{{index}}">
+      <view class="row-main">
+        <view class="row-title"><text class="name">{{item.name}}</text><text wx:if="{{item.is_me}}" class="chip">我</text><text class="chip {{item.role === 'admin' ? 'chip-blue' : ''}}">{{item.role_label}}</text><text wx:if="{{item.status !== 'active'}}" class="chip chip-red">{{item.status_label}}</text></view>
+        <view class="row-sub small muted">{{item.joined}} 加入 · 跟进中 {{item.customers}} 位 · 交付中 {{item.students}} 位</view>
+      </view>
+      <view class="arrow">›</view>
+    </view>
+  </view>
+  <view wx:if="{{gone.length}}" class="tiny muted">已退出的：<text wx:for="{{gone}}" wx:key="uid">{{item.name}}　</text></view>
+  <view class="info mt">{{members_only_own ? '现在：成员只能看到自己负责的客户和学员。' : '现在：团队里互相看得到所有客户和学员。'}}可以在“我的 → 团队设置”里改。</view>
+</view>

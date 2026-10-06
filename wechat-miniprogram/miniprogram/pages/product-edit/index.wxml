@@ -1,0 +1,23 @@
+<include src="../../tpl/state.wxml"/>
+<view wx:if="{{!loading && !error}}" class="wrap wrap-bar">
+  <view class="info">没核实的项目先保留“{{pending_text}}”，不要凭印象填。核实一项改一项，全团队报价和核对都以这张卡为准。</view>
+  <include src="../../tpl/errors.wxml"/>
+  <view wx:for="{{sections}}" wx:for-item="sec" wx:key="title" class="card">
+    <view class="card-title">{{sec.title}}</view>
+    <view wx:for="{{sec.fields}}" wx:for-item="fd" wx:key="key" class="field">
+      <view class="field-label">{{fd.label}}<text wx:if="{{fd.key === 'name'}}" class="req">*</text></view>
+      <view wx:if="{{fd.kind === 'vehicle'}}" class="opts">
+        <view wx:for="{{vehicles}}" wx:key="*this" class="opt {{f.vehicle === item ? 'opt-on' : ''}}" bindtap="onChoose" data-k="vehicle" data-v="{{item}}">{{item}}</view>
+      </view>
+      <picker wx:elif="{{fd.kind === 'date'}}" mode="date" value="{{f[fd.key] || today}}" end="{{today}}" data-k="{{fd.key}}" bindchange="onDate">
+        <view class="picker {{f[fd.key] ? '' : 'placeholder'}}">{{f[fd.key] || '还没核验'}}</view>
+      </picker>
+      <textarea wx:elif="{{fd.kind === 'long'}}" class="textarea" value="{{f[fd.key]}}" data-k="{{fd.key}}" bindinput="onField" maxlength="1000" auto-height placeholder="例：{{fd.example}}"/>
+      <input wx:else class="input" value="{{f[fd.key]}}" data-k="{{fd.key}}" bindinput="onField" maxlength="200" placeholder="例：{{fd.example}}"/>
+      <view wx:if="{{fd.hint}}" class="hint">{{fd.hint}}</view>
+    </view>
+  </view>
+</view>
+<view wx:if="{{!loading && !error}}" class="bar">
+  <view class="btn btn-primary {{busy ? 'btn-off' : ''}}" hover-class="btn-hover" bindtap="save">保存</view>
+</view>

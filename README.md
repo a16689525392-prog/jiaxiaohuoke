@@ -4,7 +4,7 @@
 
 # 驾校招生业务系统
 
-**给校园驾校招生小团队用的轻量网页系统 —— 一台 Ubuntu 机器、一条命令装好，电脑和手机浏览器都能用。**
+**给校园驾校招生小团队用的轻量业务系统 —— 网页版一条命令装在自己的 Ubuntu 机器上；微信小程序版放在微信云开发里，不需要服务器。**
 
 把 **产品 → 获客 → 客户管理 → 销售 → 交付 → 回访 → 转介绍** 连成一条线。
 
@@ -13,15 +13,32 @@
 ![Dependencies](https://img.shields.io/badge/依赖-仅标准库-brightgreen)
 ![Database](https://img.shields.io/badge/数据库-SQLite-003B57?logo=sqlite&logoColor=white)
 ![Platform](https://img.shields.io/badge/平台-Ubuntu%20%7C%20Docker-E95420?logo=ubuntu&logoColor=white)
+![WeChat](https://img.shields.io/badge/微信小程序-云开发-07C160?logo=wechat&logoColor=white)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-[功能一览](#-功能一览) · [界面截图](#-界面截图) · [快速开始](#-快速开始) · [安装](#一安装ubuntu) · [Docker](#六用-docker-运行另一种方式) · [安全](#七访问范围和安全) · [常见问题](#八常见问题) · [开发](#-参与开发)
+[选哪个版本](#-两个版本选哪个) · [功能一览](#-功能一览网页版) · [界面截图](#-界面截图网页版) · [快速开始](#-快速开始网页版) · [安装](#一安装ubuntu) · [Docker](#六用-docker-运行另一种方式) · [安全](#七访问范围和安全) · [常见问题](#八常见问题) · [📱 小程序版](#-微信小程序版) · [开发](#-参与开发) · [更新日志](CHANGELOG.md)
 
 </div>
 
 ---
 
-## ✨ 特点
+## 🧭 两个版本，选哪个
+
+这个仓库里有同一套业务规则的两个版本，**选一个用就行**，两边的数据不互通。
+
+| | 🖥 网页版（仓库根目录） | 📱 微信小程序版（[`wechat-miniprogram/`](wechat-miniprogram/)） |
+| --- | --- | --- |
+| 运行在哪 | 你自己的 Ubuntu 机器 / Docker | 微信云开发（云函数 + 云数据库） |
+| 需要准备 | 一台局域网里的电脑或服务器 | 一个微信小程序账号（个人主体即可） |
+| 怎么打开 | 同一局域网下的浏览器（电脑、手机） | 微信里打开小程序，外出也能用 |
+| 部署 | `sudo bash install.sh`，不需要联网 | 微信开发者工具导入、部署云函数，约 10 分钟；上线要备案和审核 |
+| 团队 | 一套部署 = 一个团队，账号密码登录 | 一个云环境可开多个互相隔离的团队，微信身份 + 邀请码加入 |
+| 功能 | 完整（含周复盘、渠道对比、导出与备份） | 日常功能齐全，少了周复盘、渠道对比、导出等（[详见下文](#和网页版的区别)） |
+| 费用 | 自己的机器，无额外费用 | 云开发按套餐收费，以微信云开发控制台为准 |
+
+> 网页版的说明在下面第一到第八节；小程序版见 [📱 微信小程序版](#-微信小程序版) 和 [wechat-miniprogram/README.md](wechat-miniprogram/README.md)。
+
+## ✨ 特点（网页版）
 
 - **零依赖**：只用 Python 标准库 + SQLite，不需要 `pip install`，也不需要联网安装。
 - **一条命令部署**：`sudo bash install.sh` 自动注册成 systemd 服务，开机自启，带 `jiaxiao` 管理命令。
@@ -31,7 +48,7 @@
 - **默认安全**：只接受内网和本机访问，密码加盐慢哈希，登录失败限流，CSRF 防护。
 - **有测试**：71 项自动化测试，CI 在 Python 3.8 ~ 3.13 上自动运行。
 
-## 📋 功能一览
+## 📋 功能一览（网页版）
 
 | 菜单 | 做什么 |
 | --- | --- |
@@ -49,7 +66,7 @@
 每人一个账号。管理员能看全部数据，能改产品卡、话术、渠道和规则；成员默认全团队共享，
 也可以在“系统设置”里改成“成员只能看到自己负责的客户和学员”。
 
-## 🖼 界面截图
+## 🖼 界面截图（网页版）
 
 > 截图里的团队、驾校、客户都是演示数据。
 
@@ -72,7 +89,7 @@
 
 </details>
 
-## 🚀 快速开始
+## 🚀 快速开始（网页版）
 
 **想先试一下（任何装了 Python 3.8+ 的电脑都行，Windows / macOS / Linux）：**
 
@@ -284,6 +301,79 @@ python3 run.py            # 数据放在当前目录的 data/ 里，Ctrl+C 停�
 
 **Windows / macOS 能用吗**　`python3 run.py` 直接运行可以（只要有 Python 3.8+）。`install.sh` 和 `jiaxiao` 管理命令只适用于带 systemd 的 Linux（Ubuntu）。
 
+## 📱 微信小程序版
+
+> 代码在 [`wechat-miniprogram/`](wechat-miniprogram/)，完整部署手册见 [wechat-miniprogram/README.md](wechat-miniprogram/README.md)。
+
+招生团队自己用的微信小程序工作台：登记客户、排跟进时间、付款前四项核对、按节点做交付。
+和网页版是同一套规则，数据放在你自己小程序的**微信云开发**里，不需要服务器、域名和备案的网站。
+
+### 界面
+
+> 下面是用仓库自带的本地渲染脚本（`tests/mp/shots.js`）画出来的演示数据截图，和真机上的样子接近但不完全一样。
+
+| 欢迎 / 创建团队 | 今日 | 客户 | 客户详情 |
+| --- | --- | --- | --- |
+| ![欢迎](docs/screenshots/miniprogram/welcome.png) | ![今日](docs/screenshots/miniprogram/home.png) | ![客户](docs/screenshots/miniprogram/customers.png) | ![客户详情](docs/screenshots/miniprogram/customer.png) |
+| **收定金 / 正式报名** | **交付** | **学员交付清单** | **资料** |
+| ![报名](docs/screenshots/miniprogram/enroll.png) | ![交付](docs/screenshots/miniprogram/students.png) | ![学员](docs/screenshots/miniprogram/student.png) | ![资料](docs/screenshots/miniprogram/library.png) |
+| **产品卡** | **我的** | **数据看板** | **自检** |
+| ![产品卡](docs/screenshots/miniprogram/product.png) | ![我的](docs/screenshots/miniprogram/me.png) | ![数据](docs/screenshots/miniprogram/data.png) | ![自检](docs/screenshots/miniprogram/selftest.png) |
+
+### 功能
+
+| 底部页签 | 做什么 |
+| --- | --- |
+| 今日 | 今天要跟进谁、谁逾期了、谁没排期；哪些学员待办到期、7 天内要考试 |
+| 客户 | 登记、分级（A/B/C/D）、记录跟进、付款前四项核对、收定金 / 正式报名 |
+| 交付 | 正式报名后的学员：节点清单、资料、四科考试、拿证回访、异常台账 |
+| 资料 | 产品卡、统一话术（能自动带上产品卡里核实过的内容）、获客渠道、转介绍、开始与红线 |
+| 我的 | 跟进日历、数据看板、每日数据；管理员还有成员、团队设置、自检 |
+
+写死在程序里的规矩：在跟的客户必须有下次跟进时间；“已交定金”“已正式报名”只能在付款前四项核对之后设；
+异常要写清联系了谁、预计何时解决，回访确认后才算关闭；看起来像身份证号的内容存不进去；产品卡上没核实的项目一律显示“按当前合作协议核验”。
+
+### 部署（大约 10 分钟）
+
+1. **下载代码**：`git clone https://github.com/a16689525392-prog/jiaxiaohuoke.git`，或在 GitHub 页面点 Code → Download ZIP。
+2. **导入项目**：微信开发者工具 → 导入项目 → 选 `wechat-miniprogram` 文件夹。**AppID 换成你自己的小程序**，后端服务选“微信云开发”。
+3. **确认云环境**：只开通一个环境不用管；有多个时把环境 ID 填进 `miniprogram/config.js` 的 `ENV_ID`。
+4. **改创建口令（必做）**：`cloudfunctions/api/config.js` 里的 `TEAM_CREATE_CODE` 默认是 `CHANGE-ME`，
+   开源仓库里人人看得到，**一定要换成你自己的一串字符**，否则任何人都能在你的云环境里建团队。
+5. **部署云函数**：右键 `cloudfunctions/api` → “创建并部署：云端安装依赖（不上传 node_modules）”。
+6. **创建团队**：模拟器里选“创建团队”，填团队名称、称呼和口令，你就是管理员。
+7. **跑一遍自检**：我的 → 自检 → 开始自检。会在你的云环境里把登记、跟进、报名、交付、异常、统计和团队隔离真的走一遍（9 步），
+   用的临时数据最后全部删掉。全部通过就可以用了。
+
+**上线前**（只能在微信公众平台后台做）：服务类目选“工具”下的类目；在“用户隐私保护指引”里声明使用剪切板；
+完成小程序备案；提交审核时在备注里写明“团队内部工具”并附上创建口令。详见 [小程序 README 的“上线之前”](wechat-miniprogram/README.md#上线之前这几件事只能你自己在微信后台做)。
+
+### 团队与数据
+
+- **邀请同事**：我的 → 成员，把邀请码发给对方；对方选“加入团队”，管理员点“通过”。一个微信号只能在一个团队里。
+- **两种角色**：管理员看全部、改产品卡 / 话术 / 渠道 / 设置；成员做日常登记、跟进、交付。可以打开“成员只看自己的”。
+- **数据安全**：小程序端不直接读写数据库，全部经过云函数 `api`，云函数只认微信传来的 openid，并按团队和权限过滤；
+  数据在 10 个 `jx_` 开头的集合里。集合权限保持默认“仅创建者可读写”，**不要**改成“所有用户可读”。
+- **备份**：云开发控制台 → 数据库 → 选集合 → 导出（小程序里没有做导出功能）。
+
+### 和网页版的区别
+
+- 小程序版没做：周复盘、月度渠道对比和成本、对比清单、内容选题、转介绍奖励的发放记录、漏斗目标线、导出和备份。
+- 小程序版多出来的：团队和邀请码（一个云环境可以有多个互相隔离的团队）。
+- 两边的数据不互通。
+
+### 本地测试
+
+需要 Node 18 或更新的版本，不需要安装任何依赖：
+
+```bash
+cd wechat-miniprogram
+node --test tests/test_*.js
+```
+
+共 95 项：直接调用云函数检查规则、权限和团队隔离；在 Node 里模拟小程序运行时按界面文字点击、输入；静态检查页面登记、WXML 绑定和云函数动作。
+这些测试用的是假的数据库和假的运行环境，替代不了真机 —— 真实环境由“自检”和开发者工具里的实际操作来确认。
+
 ## 🛠 参与开发
 
 ### 目录结构
@@ -296,6 +386,12 @@ templates/        页面模板          static/   样式和脚本
 tests/            自动化测试         deploy/   systemd 服务文件和 jiaxiao 命令
 docs/             说明文档用的截图    .github/  CI 和自动发布
 install.sh  uninstall.sh  Dockerfile  docker-compose.yml
+
+wechat-miniprogram/       微信小程序版（单独的项目，用微信开发者工具打开这个文件夹）
+  miniprogram/            小程序端：25 个页面、公共片段、调用云函数的封装
+  cloudfunctions/api/     唯一的云函数：团队、客户、交付、资料、今日与数据、自检
+  tests/                  Node 本地测试（假数据库 + 假小程序运行时）
+  project.config.json     开发者工具的项目配置
 ```
 
 只用 Python 标准库和 SQLite，没有第三方依赖。内置的话术、交付清单和默认渠道在 `app/consts.py`，
@@ -305,23 +401,36 @@ install.sh  uninstall.sh  Dockerfile  docker-compose.yml
 
 ```bash
 python3 run.py                                   # 启动，改完代码重启即可
-python3 -m unittest discover -s tests -v         # 运行全部测试
+python3 -m unittest discover -s tests -v         # 运行网页版全部测试
+(cd wechat-miniprogram && node --test tests/test_*.js)   # 运行小程序版全部测试
 ```
 
-每次 push 和 Pull Request，GitHub Actions 会在 Python 3.8 ~ 3.13 上跑完整测试，并检查 Docker 镜像能否构建、启动。
+每次 push 和 Pull Request，GitHub Actions 会在 Python 3.8 ~ 3.13 上跑网页版测试、检查 Docker 镜像能否构建和启动，
+并在 Node 18 / 20 / 22 上跑小程序版测试。
 
 ### 发布新版本
+
+**网页版**
 
 1. 修改 `app/core.py` 里的 `VERSION`，在 [CHANGELOG.md](CHANGELOG.md) 写上变化。
 2. 打标签并推送：`git tag v1.0.1 && git push origin v1.0.1`
 3. GitHub Actions 会自动跑测试、打包 `jiaxiao-1.0.1.tar.gz`，并创建 Release。
 
+**小程序版**
+
+1. 修改 `wechat-miniprogram/cloudfunctions/api/config.js` 里的 `VERSION`，在 [CHANGELOG.md](CHANGELOG.md) 写上变化。
+2. 改了云函数：开发者工具里右键 `cloudfunctions/api` →“上传并部署：云端安装依赖”。
+3. 改了小程序端：开发者工具“上传”，到微信公众平台提交审核、发布。
+
 ### 贡献
 
-欢迎提 Issue 和 Pull Request。提交前请确认 `python3 -m unittest discover -s tests` 全部通过，
-并保持“只用标准库、不引入第三方依赖”的原则。
+欢迎提 Issue 和 Pull Request。提交前请确认两边的测试都通过，
+并保持网页版“只用 Python 标准库”、小程序版“除 `wx-server-sdk` 外不引入第三方依赖”的原则。
+**不要把自己的创建口令、云环境 ID 或任何密钥提交到仓库。**
 
 ## ✅ 测试情况
+
+**网页版**
 
 - 自动化测试 71 项，在 Python 3.8、3.9、3.10、3.11、3.12、3.13、3.14 上全部通过，
   包括经过真实 HTTP 服务器的整套流程和并发写入。
@@ -330,6 +439,11 @@ python3 -m unittest discover -s tests -v         # 运行全部测试
   测试环境里没有运行中的 systemd，“启动 / 停止服务”这一步是用替身程序代替的；服务文件本身用 `systemd-analyze verify` 检查过。
 - **没有实际跑过的**：真实 systemd 下的服务启动。第一次部署后请用 `sudo jiaxiao status` 确认一下。
   Docker 镜像的构建和启动由 CI 自动检查。
+
+**小程序版**
+
+- 本地自动化测试 95 项全部通过（Node 22），CI 在 Node 18 / 20 / 22 上运行。
+- 真实云环境里的行为由小程序内置的“自检”验证（9 步，含团队隔离），部署后请跑一次。
 
 ## 📄 说明与免责声明
 

@@ -1,0 +1,5 @@
+<view wx:if="{{loading}}" class="empty">加载中…</view>
+<view wx:if="{{!loading && error}}" class="wrap">
+  <view class="errors">{{error}}</view>
+  <view class="btn" hover-class="btn-hover" bindtap="retry">重试</view>
+</view>
