@@ -2,7 +2,11 @@
 
 <img src="static/favicon.svg" width="72" alt="logo">
 
-# 驾校招生业务系统
+# 驾校招生业务系统 | Driving School Enrollment Management System
+
+**语言 / Language：** [简体中文](README.md) · [English](README.en.md)
+
+**A lightweight, open-source workflow tool for small campus driving-school enrollment teams.**
 
 **给校园驾校招生小团队用的轻量业务系统 —— 网页版一条命令装在自己的 Ubuntu 机器上；微信小程序版放在微信云开发里，不需要服务器。**
 
